@@ -1,0 +1,67 @@
+name: local-proof
+
+on:
+    push:
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    local-proof:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install tools
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y iverilog verilator
+
+            - name: Python compile
+              run: python3 -m compileall -q userspace scripts tests firmware
+
+            - name: Canonical local release validation
+              run: make release-validate-local
+
+            - name: Enforce proof-local prereqs
+              run: python3 scripts/check_release_prereqs.py --mode proof-local
+
+            - name: Validate source archive discipline
+              run: |
+                  latest_source=$(ls -t dist/*-source-*.zip | head -1)
+                  if [ -z "$latest_source" ]; then
+                    echo "No source archive generated"
+                    exit 1
+                  fi
+                  python3 scripts/validate_release_archive.py "$latest_source" --mode source
+
+            - name: Validate latest proof-local archive
+              id: validate_proof_archive
+              run: |
+                  latest_proof=$(ls -t dist/*-proof-local-*.zip | head -1)
+                  if [ -z "$latest_proof" ]; then
+                    echo "No proof-local archive generated"
+                    exit 1
+                  fi
+                  python3 scripts/validate_release_archive.py "$latest_proof" --mode proof-local
+                  echo "proof_archive=$latest_proof" >> "$GITHUB_OUTPUT"
+
+            - name: Verify source tree hash consistency
+              run: |
+                  manifest_hash=$(jq -r '.source_tree_hash' reports/proof_manifest_local.json | tr -d '[:space:]')
+                  txt_hash=$(tr -d '[:space:]' < reports/source_tree_hash.txt)
+                  if [ "$manifest_hash" != "$txt_hash" ]; then
+                    echo "Hash mismatch: manifest=$manifest_hash, txt=$txt_hash"
+                    exit 1
+                  fi
+
+            - name: Enforce proof manifest invariants
+              run: make check-proof-invariant
+
+            - name: Upload proof-local archive
+              uses: actions/upload-artifact@v4
+              with:
+                  name: waveform-brain-proof-local
+                  path: ${{ steps.validate_proof_archive.outputs.proof_archive }}
+                  if-no-files-found: error

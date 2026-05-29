@@ -1,0 +1,12 @@
+Wrote 16 vectors to /Users/dawsonblock/Downloads/waveform_brain_v1_auto_cal/sim/gkp_cosim_vectors.hex (profile=default)
+
+rtl/gkp_decoder.v:10: warning: timescale for gkp_decoder inherited from another file.
+sim/tb_gkp_decoder_cosim.sv:8: ...: The inherited timescale is here.
+rtl/poly_eval.v:12: warning: timescale for poly_eval inherited from another file.
+sim/tb_gkp_decoder_cosim.sv:8: ...: The inherited timescale is here.
+rtl/soft_weighting.v:17: warning: timescale for soft_weighting inherited from another file.
+sim/tb_gkp_decoder_cosim.sv:8: ...: The inherited timescale is here.
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+
+COSIM SUMMARY: pass=16 fail=0

@@ -1,0 +1,43 @@
+python3 scripts/clean_generated_artifacts.py
+removed_count=0
+python3 scripts/check_source_tree_clean.py
+source-tree-clean: PASS
+PYTHONPATH=. python3 -m unittest discover -s tests
+................................................................................................
+----------------------------------------------------------------------
+Ran 96 tests in 1.976s
+
+OK
+python3 scripts/rtl_sanity_check.py
+Sanity check complete.
+python3 scripts/generate_reciprocal_lut.py
+Wrote 131072 entries to /Users/dawsonblock/Downloads/waveform_brain_v1_auto_cal/rtl/reciprocal_lut_w16_q24w25.mem
+python3 scripts/extract_register_map.py
+Extracted 29 registers
+Wrote register_map.json
+Wrote register_map.md
+Wrote register_map_issues.log
+python3 scripts/analyze_cdc_crossings.py
+=== Suggested CDC Crossings ===
+- STATUS (0x04): Fabric -> AXI -> xpm_cdc_single for single-bit status; xpm_cdc_gray for counters/FSM; add set_bus_skew for gray buses
+- FAULT_FLAGS (0x08): Fabric -> AXI -> xpm_cdc_single for single-bit status; xpm_cdc_gray for counters/FSM; add set_bus_skew for gray buses
+- PRBS_ENABLE (0x0C): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- INV_DELTA_Q (0x10): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- DELTA_ADC_Q (0x14): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- COEFF0 (0x18): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- COEFF1 (0x1C): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- COEFF2 (0x20): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- COEFF3 (0x24): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- ALPHA (0x28): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- KILL_THRESHOLD (0x2C): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- CLEAR_FAULTS (0x30): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- TELEM_CTRL (0x34): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- TELEM_WINDOW (0x38): AXI -> Fabric -> xpm_cdc_single for single-bit pulses; xpm_cdc_handshake for multi-bit config; constrain synchronized endpoints
+- TELEM_STATUS (0x3C): Fabric -> AXI -> xpm_cdc_single for single-bit status; xpm_cdc_gray for counters/FSM; add set_bus_skew for gray buses
+- TELEM_FLIPS_DELTA (0x40): Fabric -> AXI -> xpm_cdc_handshake for coherent window payload transfer; tie event pulse to payload delivery
+- TELEM_TOTAL_FLIPS (0x44): Fabric -> AXI -> xpm_cdc_handshake for coherent window payload transfer; tie event pulse to payload delivery
+- HEALTH_STATUS (0x48): Fabric -> AXI -> xpm_cdc_single for single-bit status; xpm_cdc_gray for counters/FSM; add set_bus_skew for gray buses
+- HEALTH_TELEM_DONE (0x58): Fabric -> AXI -> xpm_cdc_single for single-bit status; xpm_cdc_gray for counters/FSM; add set_bus_skew for gray buses
+Wrote cdc_crossing_suggestions.md
+Wrote cdc_crossing_suggestions.json
+Validation completed. Note: this does not replace Vivado elaboration/timing.

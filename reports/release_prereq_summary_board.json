@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "mode": "proof-board",
+  "generated_at_utc": "2026-05-29T06:43:13.190301+00:00",
+  "command": "python3 scripts/check_release_prereqs.py --mode proof-board",
+  "pass": false,
+  "checks": [
+    {
+      "name": "tools",
+      "pass": true,
+      "code": "OK",
+      "message": "pass"
+    },
+    {
+      "name": "required_reports",
+      "pass": false,
+      "code": "MISSING_BOARD_REPORTS",
+      "message": "missing required reports: reports/board_smoke_summary.json, reports/board_capture_summary.json, reports/cdc_critical_summary.json, reports/cdc_cell_match_summary.md, reports/timing_summary.rpt, reports/drc.rpt, reports/cdc_full.rpt, reports/cdc_critical.rpt, reports/clock_interaction.rpt, reports/utilization.rpt, reports/vivado_synth.log, reports/vivado_impl.log"
+    }
+  ]
+}

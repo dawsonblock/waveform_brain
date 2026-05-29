@@ -1,0 +1,47 @@
+# macOS archive noise
+__MACOSX/
+.DS_Store
+
+# Python caches
+*.pyc
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+
+# Simulation build outputs
+sim/build/
+build_dir/
+*.jou
+*.str
+*.wdb
+*.vcd
+*.fst
+
+# Generated reports and summaries
+reports/*.rpt
+reports/*_summary.json
+reports/*_summary.md
+reports/*_package.zip
+reports/*.log
+!reports/make_validate.log
+!reports/unittest.log
+!reports/cosim_gkp.log
+!reports/axilite_regfile_sim.log
+!reports/packer_axis_sim.log
+!reports/safety_monitor_sim.log
+!reports/prbs_datapath_sim.log
+
+# Generated register and CDC artifacts
+register_map.json
+register_map.md
+register_map_issues.log
+cdc_crossing_suggestions.json
+cdc_crossing_suggestions.md
+
+# Generated LUT/vector artifacts
+rtl/reciprocal_lut_w16_q24w25.mem
+reciprocal_lut_w16_q24w25.mem
+sim/gkp_cosim_vectors.hex
+
+# Release artifacts
+dist/*.zip
