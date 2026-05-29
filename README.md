@@ -32,7 +32,7 @@ iteratively hardened into a bring-up flow with explicit quality gates:
 - **Health + telemetry visibility**
   - Saturating counters, telemetry windows, FIFO/stream diagnostics.
 - **Deterministic co-sim**
-  - Golden model vector generation plus optional Icarus harness execution.
+  - Golden model vector generation plus Icarus/Vivado simulation (optional for exploration, mandatory for release validation/proof packaging).
 
 ## Architecture at a glance
 
@@ -78,7 +78,7 @@ Or run the consolidated flow:
 make validate
 ```
 
-### 3) Run optional RTL/golden co-sim
+### 3) Run RTL/golden co-sim
 
 ```bash
 make cosim-vectors
@@ -198,8 +198,10 @@ Strict release flow targets:
 
 - `make validate` is intentionally ordered to keep compact-package tests
   meaningful before regenerating heavy artifacts.
-- Co-sim is optional in environments without Icarus; Vivado simulator can be
-  used for equivalent checks.
+- Co-sim is optional for exploration in environments without Icarus; Vivado
+  simulator can be used for equivalent checks.
+- Co-sim and behavioral simulation are mandatory for release validation and
+  proof packaging.
 - Proof packaging has two levels:
   - local: `proof-package-local` / `validate-release-local`
   - board: `proof-package-board` / `validate-release-board`
@@ -209,3 +211,11 @@ Strict release flow targets:
 - Strict board proof is fail-closed and requires semantic pass summaries plus
   Vivado reports and raw evidence logs in proof packaging.
 - Board access should remain blocked unless implementation gate criteria pass.
+
+## Validation flow matrix
+
+| Flow | Command | Simulator requirement | Vivado reports requirement |
+| --- | --- | --- | --- |
+| Exploration flow | `make validate` | Optional | Optional |
+| Local proof flow | `make release-validate-local` | Mandatory | Not required |
+| Board proof flow | `make release-validate-board` | Mandatory | Mandatory |

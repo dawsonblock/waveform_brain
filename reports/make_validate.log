@@ -1,9 +1,11 @@
 python3 scripts/clean_generated_artifacts.py
-removed_count=8
+removed_count=14
+python3 scripts/check_source_tree_clean.py
+source-tree-clean: PASS
 PYTHONPATH=. python3 -m unittest discover -s tests
 ........................................................................
 ----------------------------------------------------------------------
-Ran 72 tests in 0.886s
+Ran 72 tests in 1.080s
 
 OK
 python3 scripts/rtl_sanity_check.py

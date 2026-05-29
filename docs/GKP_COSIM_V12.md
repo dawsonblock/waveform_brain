@@ -16,13 +16,17 @@ Generate vectors:
 python3 scripts/generate_gkp_cosim_vectors.py --count 64
 ```
 
-Run optional Icarus Verilog co-sim:
+Run Icarus Verilog co-sim:
 
 ```bash
 python3 scripts/run_gkp_cosim.py
 ```
 
-The runner requires `iverilog` and `vvp`. If those tools are not installed, use the same vector file with Vivado xsim.
+The runner requires `iverilog` and `vvp`. If those tools are not installed,
+use the same vector file with Vivado xsim.
+
+Icarus/Vivado simulation is optional for quick local exploration, but mandatory
+for release validation and proof packaging.
 
 ## What is checked
 

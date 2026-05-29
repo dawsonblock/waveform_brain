@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 import unittest
@@ -37,7 +38,9 @@ class TestGkpDecoderEdgeCosim(unittest.TestCase):
         )
         self.assertEqual(proc.returncode, 0, proc.stdout)
         lines = [
-            ln for ln in out.read_text().splitlines() if ln and not ln.startswith("#")
+            ln
+            for ln in out.read_text().splitlines()
+            if ln and not ln.startswith("#")
         ]
         self.assertEqual(len(lines), 16)
         self.assertTrue(any(ln.startswith("8000") for ln in lines))
@@ -45,7 +48,9 @@ class TestGkpDecoderEdgeCosim(unittest.TestCase):
 
     def test_edge_cosim_optional(self):
         if shutil.which("iverilog") is None or shutil.which("vvp") is None:
-            self.skipTest("iverilog/vvp not installed")
+            if os.environ.get("WB_STRICT_SIM") == "1":
+                self.fail("iverilog/vvp required for strict simulation test")
+            self.skipTest("iverilog/vvp missing")
 
         out = Path("sim/gkp_cosim_vectors_edge_tmp.hex")
         try:

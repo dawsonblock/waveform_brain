@@ -14,14 +14,12 @@ This document summarises the key improvements and fixes introduced in the upgrad
 - Added `formal/packer_axis_properties.sv`.
 - Added `docs/STREAMING_ROBUSTNESS_V19.md`.
 
-
 - Corrected `rtl/packer_axis.v` to hold AXI4-Stream `TVALID`, `TDATA`, and `TLAST` stable until `TREADY` accepts each beat.
 - Added packet metadata format version `4'h1` and updated userspace parser validation.
 - Repaired `firmware/registers.h` include guard so health monitor register definitions are inside the guard.
 - Upgraded `firmware/calibration_fsm.c` with telemetry-window helpers and alpha grid-search tuning.
 - Added `scripts/audit_rtl_arithmetic.py` and Makefile target `audit-arith` to detect runtime division/modulo risk in RTL.
 - Added `docs/AXIS_CALIB_AUDIT_V18.md`.
-
 
 - Corrected `scripts/waveform_brain_bitstream.tcl` to resolve paths relative to the script instead of assuming current working directory.
 - Marked RTL `.v` files as SystemVerilog in Vivado because the design uses SystemVerilog constructs.
@@ -30,11 +28,9 @@ This document summarises the key improvements and fixes introduced in the upgrad
 - Cleaned Makefile target ordering and fixed malformed `size-report` / `cdc-signoff-package` target collision.
 - Added `docs/VIVADO_FLOW_FIX_V17.md`.
 
-
 - Corrected `scripts/preboard_check.py` ordering so compact-package tests run before generated heavy artifacts are created.
 - Added generated-artifact cleanup at the start of `preboard_check.py`.
 - Added `docs/PREBOARD_GATE_FIX_V16.md`.
-
 
 - Added v0.15 pre-board proof gate:
   - `scripts/preboard_check.py`
@@ -50,7 +46,6 @@ This document summarises the key improvements and fixes introduced in the upgrad
   - `implementation-gate`
   - `vivado-signoff-package`
 
-
 - Added centralized CDC wrapper `rtl/waveform_brain_cdc_wrapper.v`.
 - Added preferred CDC-hardened integration top `rtl/waveform_brain_axi4lite_cdc_top.v` with separate AXI and fabric clocks.
 - Added coherent multi-bit config transfer through `xpm_cdc_handshake`.
@@ -62,13 +57,11 @@ This document summarises the key improvements and fixes introduced in the upgrad
 - Updated bitstream flow to default to `waveform_brain_axi4lite_cdc_top` and set `CDC_VERIFY_FAIL_ON_ZERO=1`.
 - Added `docs/CDC_HARDENING_V14.md`, `docs/PHASE1_SIGNOFF_SHEET.md`, and `scripts/package_cdc_signoff.py`.
 
-
 - Reduced package size by removing generated reciprocal LUT `.mem`, register-map outputs, CDC suggestion outputs, and generated co-sim vectors from the archive.
 - Updated Vivado bitstream script to auto-generate the reciprocal LUT before adding memory files.
 - Updated co-sim runner to generate the reciprocal LUT when missing.
 - Expanded `clean-generated` and added `size-report` Makefile target.
 - Added `docs/COMPACT_PACKAGE_V13.md`.
-
 
 - Added optional standards-oriented AXI4-Lite slave module `rtl/axilite_regfile_full.v`.
 - Added optional integration wrapper `rtl/waveform_brain_axi4lite_full_top.v`.
@@ -80,7 +73,6 @@ This document summarises the key improvements and fixes introduced in the upgrad
 - Added `docs/AXILITE_FULL_V12.md` and `docs/GKP_COSIM_V12.md`.
 - Added `cosim-vectors` and `cosim-gkp` Makefile targets.
 
-
 - Replaced simplified always-ready `axilite_regfile.v` behavior with a deterministic lightweight handshake model.
 - Added one-cycle accept pulses for write/read address channels.
 - Added explicit write response/read valid pulse generation.
@@ -88,13 +80,11 @@ This document summarises the key improvements and fixes introduced in the upgrad
 - Added byte-enable handling through `WSTRB` for writable registers.
 - Added `docs/AXILITE_HANDSHAKE_V11.md`.
 
-
 - Hardened reciprocal LUT implementation to v0.10 using `RECIP_FRAC=24` and `RECIP_WIDTH=25`.
 - Replaced `reciprocal_lut_w16_q24.mem` with `reciprocal_lut_w16_q24w25.mem` so denom=1 can represent exactly `2^24`.
 - Updated `soft_weighting.v`, `generate_reciprocal_lut.py`, and `soft_weight_model.py` to match the Q24/W25 table.
 - Added an edge-case unit test for `alpha=1, r=0` producing exactly Q8.8 full-scale weight `256`.
 - Added `docs/RECIPROCAL_LUT_V10.md`.
-
 
 - Replaced runtime division in `rtl/soft_weighting.v` with a divider-free reciprocal-ROM plus multiplier pipeline.
 - Added `rtl/reciprocal_lut_w16_q24w25.mem` and `scripts/generate_reciprocal_lut.py`.
@@ -103,18 +93,15 @@ This document summarises the key improvements and fixes introduced in the upgrad
 - Added `docs/TIMING_REFACTOR_V09.md`.
 - Updated Vivado bitstream script to add `.mem` files.
 
-
 - Added `rtl/health_monitor.v` with saturating counters for safety trips, AXI-Stream stalls, decoder-valid cycles, and completed telemetry windows.
 - Added health monitor registers at `0x48` through `0x58`.
 - Added `userspace/health_monitor.py` for formatting health register dumps.
 - Added `docs/HEALTH_MONITOR.md` with bring-up interpretation rules.
 
-
 - Hardened `parse_cdc_report.py` with structured rule detection, JSON summaries, Markdown summaries, strict mode, sample line contexts, and exit-code based failure.
 - Hardened `build_gate_cdc.tcl` to generate full/critical CDC reports, parse both reports, write JSON/Markdown summaries, and run cell-matching verification.
 - Updated `verify_cdc_constraints.tcl` with optional hard-fail behavior and a Markdown cell-matching summary.
 - Added `cdc-gate-check` Makefile target for parsing existing Vivado CDC reports outside Vivado.
-
 
 - Added `parse_cdc_report.py` with exit-code based CDC parsing and optional JSON summaries.
 - Added `build_gate_cdc.tcl` to generate CDC reports, run the parser, and fail the build on critical CDC issues.
@@ -144,6 +131,8 @@ This document summarises the key improvements and fixes introduced in the upgrad
 
 - Historical note: soft-weighting hardware division was removed in v0.9 by the
   reciprocal ROM + multiplier pipeline. This limitation no longer applies.
+- Historical note: AXI-Stream stall handling in `packer_axis.v` was fixed in
+  v0.19. The current design holds `TVALID/TDATA/TLAST` stable under stall.
 - The stream path now preserves `TVALID/TDATA/TLAST` stability under backpressure,
   but the full end-to-end decoder source path is still bounded-loss rather than
   lossless under sustained downstream stalls.

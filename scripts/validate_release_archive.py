@@ -19,18 +19,44 @@ REQUIRED_SOURCE = [
 FORBIDDEN_SOURCE_PREFIXES = [
     "__MACOSX/",
     "sim/build/",
+    "build_dir/",
 ]
 
 FORBIDDEN_SOURCE_SUFFIXES = [
     ".pyc",
+    ".jou",
+    ".str",
+    ".wdb",
+    ".vcd",
+    ".fst",
+]
+
+FORBIDDEN_SOURCE_EXACT = [
+    ".DS_Store",
+    "rtl/reciprocal_lut_w16_q24w25.mem",
+    "reciprocal_lut_w16_q24w25.mem",
+    "register_map.json",
+    "register_map.md",
+    "register_map_issues.log",
+    "cdc_crossing_suggestions.json",
+    "cdc_crossing_suggestions.md",
+    "sim/gkp_cosim_vectors.hex",
 ]
 
 REQUIRED_PROOF_LOCAL = [
     "reports/preboard_local_summary.json",
     "reports/preboard_local_summary.md",
+    "reports/unittest.log",
+    "reports/make_validate.log",
+    "reports/cosim_gkp.log",
     "reports/axilite_regfile_sim_summary.json",
+    "reports/axilite_regfile_sim.log",
     "reports/packer_axis_sim_summary.json",
+    "reports/packer_axis_sim.log",
     "reports/safety_monitor_sim_summary.json",
+    "reports/safety_monitor_sim.log",
+    "reports/rtl_arithmetic_audit.json",
+    "reports/rtl_arithmetic_audit.md",
 ]
 
 REQUIRED_PROOF_BOARD = [
@@ -68,7 +94,9 @@ def unsafe_entry(name: str) -> bool:
 
 def single_root(entries: list[str]) -> tuple[bool, str]:
     roots = {
-        PurePosixPath(entry).parts[0] for entry in entries if PurePosixPath(entry).parts
+        PurePosixPath(entry).parts[0]
+        for entry in entries
+        if PurePosixPath(entry).parts
     }
     if len(roots) != 1:
         return False, ",".join(sorted(roots))
@@ -137,7 +165,10 @@ def validate_board_impl_semantics(
         return err
     assert impl is not None
     if not bool(impl.get("pass", False)):
-        return "proof semantic failure: " "implementation_gate_summary pass=false"
+        return (
+            "proof semantic failure: "
+            "implementation_gate_summary pass=false"
+        )
 
     checks = impl.get("checks")
     if not isinstance(checks, dict):
@@ -150,11 +181,13 @@ def validate_board_impl_semantics(
         check_data = checks.get(check_name)
         if not isinstance(check_data, dict):
             return (
-                "proof semantic failure: " f"implementation check missing: {check_name}"
+                "proof semantic failure: "
+                f"implementation check missing: {check_name}"
             )
         if not bool(check_data.get("pass", False)):
             return (
-                "proof semantic failure: " f"implementation check failed: {check_name}"
+                "proof semantic failure: "
+                f"implementation check failed: {check_name}"
             )
 
     return None
@@ -214,6 +247,18 @@ def main() -> int:
                 if any(rel.endswith(s) for s in FORBIDDEN_SOURCE_SUFFIXES):
                     print(f"forbidden source entry: {rel}")
                     return 1
+                if rel in FORBIDDEN_SOURCE_EXACT:
+                    print(f"forbidden source entry: {rel}")
+                    return 1
+                if rel.endswith("/.DS_Store"):
+                    print(f"forbidden source entry: {rel}")
+                    return 1
+                if rel.startswith("dist/") and rel.endswith(".zip"):
+                    print(f"forbidden source entry: {rel}")
+                    return 1
+                if rel.endswith(".log") and not rel.startswith("reports/"):
+                    print(f"forbidden source entry: {rel}")
+                    return 1
 
         else:
             required_proof = list(REQUIRED_PROOF_LOCAL)
@@ -225,7 +270,11 @@ def main() -> int:
                     print(f"missing required proof entry: {req}")
                     return 1
 
-            rel_to_name = {strip_root(name): name for name in names if strip_root(name)}
+            rel_to_name = {
+                strip_root(name): name
+                for name in names
+                if strip_root(name)
+            }
             semantic_error = validate_preboard_semantics(
                 zf=zf,
                 rel_to_name=rel_to_name,

@@ -1,0 +1,15 @@
+{
+  "axi_to_fabric": {
+    "config_bus": "xpm_cdc_handshake",
+    "cfg_update": "xpm_cdc_pulse",
+    "clear_faults": "xpm_cdc_pulse",
+    "telemetry_start": "xpm_cdc_pulse",
+    "telemetry_clear": "xpm_cdc_pulse"
+  },
+  "fabric_to_axi": {
+    "safety_kill": "xpm_cdc_single",
+    "fault_flags": "diagnostic_snapshot",
+    "status_word": "diagnostic_snapshot",
+    "counters": "xpm_cdc_gray"
+  }
+}

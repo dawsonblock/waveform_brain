@@ -2,6 +2,17 @@
 
 This document outlines a validation strategy for the Waveform Brain v1.0 controller. It focuses on verifying deterministic behavior, proper decoder function, safety interlocks, and streaming. It serves as a living checklist during development.
 
+## Validation Flow Matrix
+
+| Flow | Command | Simulation requirement | Vivado requirement |
+| --- | --- | --- | --- |
+| Exploration | `make validate` | Optional | Optional |
+| Local proof | `make release-validate-local` | Mandatory | Not required |
+| Board proof | `make release-validate-board` | Mandatory | Mandatory |
+
+Icarus/Vivado simulation is optional for quick local inspection, but mandatory
+for release validation and proof packaging.
+
 ## 1. Unit Tests
 
 1. **Golden Model Comparison**: Use `golden_gkp_model.py` to generate expected outputs for a variety of inputs and compare them against the Verilog decoder via simulation.
@@ -51,7 +62,6 @@ During simulation or hardware bring-up, verify:
 4. `HEALTH_TELEM_DONE` increments when a telemetry sample completes.
 5. All health counters clear when the clear-faults/control clear is asserted.
 
-
 ## AXI-Lite Handshake Validation
 
 For `axilite_regfile.v`, verify:
@@ -63,7 +73,6 @@ For `axilite_regfile.v`, verify:
 5. `RVALID` pulses with the expected register value one clock after address capture.
 6. `CLEAR_FAULTS`, `TELEM_START`, and `TELEM_CLEAR` are one-cycle pulses.
 7. Writable registers honor `WSTRB` byte enables.
-
 
 ## Golden-to-RTL Co-Simulation
 
@@ -96,7 +105,6 @@ Before using `axilite_regfile_full.v` on hardware, run protocol simulation:
 7. Unmapped address returns `SLVERR`.
 8. Pulse registers assert for one cycle only.
 
-
 ## CDC Hardening v0.14 Validation
 
 Use `waveform_brain_axi4lite_cdc_top` for any build where AXI-Lite and fabric
@@ -113,7 +121,6 @@ Required checks:
 
 Stop immediately if any direct AXI-register-to-fabric path appears outside
 `waveform_brain_cdc_wrapper.v`.
-
 
 ## Pre-Board Gate v0.15 Validation
 

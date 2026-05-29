@@ -45,11 +45,31 @@ def build_proof_root(base: Path) -> Path:
     (reports / "axilite_regfile_sim_summary.json").write_text(
         json.dumps({"pass": True}), encoding="utf-8"
     )
+    (reports / "axilite_regfile_sim.log").write_text(
+        "axilite sim ok\n",
+        encoding="utf-8",
+    )
     (reports / "packer_axis_sim_summary.json").write_text(
         json.dumps({"pass": True}), encoding="utf-8"
     )
+    (reports / "packer_axis_sim.log").write_text(
+        "packer sim ok\n",
+        encoding="utf-8",
+    )
     (reports / "safety_monitor_sim_summary.json").write_text(
         json.dumps({"pass": True}), encoding="utf-8"
+    )
+    (reports / "safety_monitor_sim.log").write_text(
+        "safety sim ok\n",
+        encoding="utf-8",
+    )
+    (reports / "rtl_arithmetic_audit.json").write_text(
+        json.dumps({"pass": True}),
+        encoding="utf-8",
+    )
+    (reports / "rtl_arithmetic_audit.md").write_text(
+        "audit ok\n",
+        encoding="utf-8",
     )
     (reports / "cdc_critical_summary.json").write_text(
         json.dumps({"pass": True}), encoding="utf-8"
@@ -74,7 +94,10 @@ def build_proof_root(base: Path) -> Path:
     (reports / "vivado_impl.log").write_text("impl ok\n", encoding="utf-8")
     (reports / "unittest.log").write_text("tests ok\n", encoding="utf-8")
     (reports / "cosim_gkp.log").write_text("cosim ok\n", encoding="utf-8")
-    (reports / "make_validate.log").write_text("validate ok\n", encoding="utf-8")
+    (reports / "make_validate.log").write_text(
+        "validate ok\n",
+        encoding="utf-8",
+    )
 
     return root
 

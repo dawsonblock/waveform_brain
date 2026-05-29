@@ -24,7 +24,7 @@ This performs all checks that do not require Vivado:
 - runs RTL sanity check
 - extracts register map
 - analyzes CDC crossing suggestions
-- optionally runs Icarus co-sim if `iverilog`/`vvp` are available
+- runs Icarus/Vivado simulation for release validation (optional only for exploration when tools are absent)
 
 Outputs:
 

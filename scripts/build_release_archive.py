@@ -30,7 +30,9 @@ SOURCE_FILES = [
 ]
 
 SOURCE_EXCLUDES = {
+    "__MACOSX",
     "sim/build",
+    "build_dir",
     "sim/gkp_cosim_vectors.hex",
     "rtl/reciprocal_lut_w16_q24w25.mem",
     "reciprocal_lut_w16_q24w25.mem",
@@ -41,12 +43,29 @@ SOURCE_EXCLUDES = {
     "cdc_crossing_suggestions.md",
 }
 
+SOURCE_EXCLUDE_SUFFIXES = {
+    ".pyc",
+    ".jou",
+    ".str",
+    ".wdb",
+    ".vcd",
+    ".fst",
+}
+
 PROOF_LOCAL_REQUIRED = [
     "reports/preboard_local_summary.json",
     "reports/preboard_local_summary.md",
+    "reports/unittest.log",
+    "reports/make_validate.log",
+    "reports/cosim_gkp.log",
     "reports/axilite_regfile_sim_summary.json",
+    "reports/axilite_regfile_sim.log",
     "reports/packer_axis_sim_summary.json",
+    "reports/packer_axis_sim.log",
     "reports/safety_monitor_sim_summary.json",
+    "reports/safety_monitor_sim.log",
+    "reports/rtl_arithmetic_audit.json",
+    "reports/rtl_arithmetic_audit.md",
 ]
 
 PROOF_BOARD_REQUIRED = [
@@ -61,8 +80,6 @@ PROOF_BOARD_REQUIRED = [
     "reports/clock_interaction.rpt",
     "reports/utilization.rpt",
     "reports/cosim_gkp.log",
-    "reports/unittest.log",
-    "reports/make_validate.log",
     "reports/vivado_synth.log",
     "reports/vivado_impl.log",
 ]
@@ -116,7 +133,11 @@ def collect_source_files() -> list[Path]:
             rel_str = rel_path.as_posix()
             if "/__pycache__/" in f"/{rel_str}/":
                 continue
-            if rel_str.endswith(".pyc"):
+            if rel_str.endswith(".log") and not rel_str.startswith("reports/"):
+                continue
+            if any(rel_str.endswith(suf) for suf in SOURCE_EXCLUDE_SUFFIXES):
+                continue
+            if rel_str == ".DS_Store" or rel_str.endswith("/.DS_Store"):
                 continue
             if has_excluded_prefix(rel_path):
                 continue

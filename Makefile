@@ -5,18 +5,27 @@ PYTHON ?= python3
 VERILATOR ?= verilator
 RTL_SRCS := $(wildcard rtl/*.v)
 
-.PHONY: all validate test lint audit-arith gen-lut cosim-vectors cosim-gkp sim-axilite sim-packer sim-safety extract-regs cdc-analyze parse-cdc cdc-gate-check lint-verilator clean-generated size-report cdc-signoff-package preboard-check implementation-gate vivado-signoff-package vivado-bitstream source-package proof-package proof-package-local proof-package-board proof-package-strict validate-release validate-release-local validate-release-board validate-release-strict make-validate-log release-prereqs release-validate release-validate-local release-validate-board release-proof-local
+.PHONY: all validate test test-static test-sim lint audit-arith gen-lut cosim-vectors cosim-gkp sim-axilite sim-packer sim-safety extract-regs cdc-analyze parse-cdc cdc-gate-check cdc-manifest-check lint-verilator lint-verilator-strict check-source-clean clean-generated size-report cdc-signoff-package preboard-check implementation-gate vivado-signoff-package vivado-bitstream source-package proof-package proof-package-local proof-package-board proof-package-strict validate-release validate-release-local validate-release-board validate-release-strict make-validate-log release-prereqs release-validate release-validate-local release-validate-board release-proof-local
 
 all:
 	@echo "Available targets: validate, test, lint, audit-arith, gen-lut, cosim-vectors, cosim-gkp, sim-axilite, sim-packer, sim-safety, extract-regs, cdc-analyze, parse-cdc, cdc-gate-check, lint-verilator, clean-generated, size-report, cdc-signoff-package, preboard-check, implementation-gate, vivado-signoff-package, vivado-bitstream, source-package, proof-package-local, proof-package-board, release-prereqs, release-validate"
 
 # Keep tests before generated heavy artifacts are recreated, otherwise compact-package
 # tests correctly fail.
-validate: clean-generated test lint gen-lut extract-regs cdc-analyze
+validate: clean-generated check-source-clean test lint gen-lut extract-regs cdc-analyze
 	@echo "Validation completed. Note: this does not replace Vivado elaboration/timing."
 
 test:
 	PYTHONPATH=. $(PYTHON) -m unittest discover -s tests
+
+test-static:
+	PYTHONPATH=. $(PYTHON) -m unittest tests.test_packet_parser tests.test_golden_model tests.test_soft_weight_model tests.test_rtl_sanity_check_behavior
+
+test-sim:
+	$(MAKE) sim-axilite
+	$(MAKE) sim-packer
+	$(MAKE) sim-safety
+	$(MAKE) cosim-gkp
 
 lint:
 	$(PYTHON) scripts/rtl_sanity_check.py
@@ -40,6 +49,14 @@ lint-verilator:
 		echo "Verilator not installed; skipping lint-verilator"; \
 	fi
 
+lint-verilator-strict:
+	@if command -v $(VERILATOR) >/dev/null 2>&1; then \
+		$(VERILATOR) --lint-only -Wall --timing $(RTL_SRCS); \
+	else \
+		echo "Verilator not installed; release lint requires it"; \
+		exit 1; \
+	fi
+
 parse-cdc:
 	@if [ -f reports/cdc_critical.rpt ]; then \
 		$(PYTHON) scripts/parse_cdc_report.py reports/cdc_critical.rpt --json-out reports/cdc_critical_summary.json; \
@@ -58,6 +75,10 @@ cdc-gate-check:
 	else \
 		echo "reports/cdc_critical.rpt not found; run Vivado report_cdc first."; \
 	fi
+	$(MAKE) cdc-manifest-check
+
+cdc-manifest-check:
+	$(PYTHON) scripts/verify_cdc_manifest.py
 
 cosim-vectors:
 	$(PYTHON) scripts/generate_gkp_cosim_vectors.py --count 64
@@ -76,6 +97,9 @@ sim-safety:
 
 clean-generated:
 	$(PYTHON) scripts/clean_generated_artifacts.py
+
+check-source-clean:
+	$(PYTHON) scripts/check_source_tree_clean.py
 
 cdc-signoff-package:
 	$(PYTHON) scripts/package_cdc_signoff.py

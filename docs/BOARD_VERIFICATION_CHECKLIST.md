@@ -2,6 +2,9 @@
 
 **Rule:** No optics until PRBS/ILA, RF loopback, safety kill, and temperature stability pass.
 
+Icarus/Vivado simulation is optional for exploration only. Release validation
+and board proof packaging require simulator evidence and Vivado report gates.
+
 This checklist outlines the steps required to verify the Waveform Brain v1.0 hardware before connecting any optical components. It mirrors the pocket version provided earlier.
 
 ## Phase 0 — Pre-power checks
@@ -100,11 +103,11 @@ Record die temperature at these points:
 
 Conservative bench rules:
 
-| Die Temperature | Status  | Action                 |
-|----------------:|:-------:|:-----------------------|
-| < 70°C          | Good    | Continue               |
-| 70–80°C         | Watch   | Monitor closely        |
-| 80–85°C         | Caution | Improve airflow        |
-| > 85°C          | Pause   | Stop and improve cooling |
+| Die Temperature | Status | Action |
+| --- | --- | --- |
+| < 70°C | Good | Continue |
+| 70–80°C | Watch | Monitor closely |
+| 80–85°C | Caution | Improve airflow |
+| > 85°C | Pause | Stop and improve cooling |
 
 These are bench guardrails, not official device limits.

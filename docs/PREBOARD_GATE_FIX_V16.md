@@ -14,7 +14,8 @@ v0.16 fixes that order.
 2. Run unit/static tests while the source tree is compact.
 3. Regenerate deterministic artifacts.
 4. Run register extraction and CDC suggestion generation.
-5. Optionally run Icarus co-simulation if available.
+5. Run Icarus/Vivado simulation for release validation. Exploration-only runs
+   may skip local Icarus execution when tools are unavailable.
 
 ## Result
 

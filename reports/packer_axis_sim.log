@@ -1,0 +1,5 @@
+rtl/packer_axis.v:32: warning: timescale for packer_axis inherited from another file.
+sim/tb_packer_axis_stall.sv:1: ...: The inherited timescale is here.
+
+TB_PASS tb_packer_axis_stall
+sim/tb_packer_axis_stall.sv:167: $finish called at 135000 (1ps)
