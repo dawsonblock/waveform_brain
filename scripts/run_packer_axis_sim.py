@@ -9,6 +9,8 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+from hash_source_tree import compute_source_tree_hash  # type: ignore
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 REPORT_JSON = PROJECT_ROOT / "reports" / "packer_axis_sim_summary.json"
 REPORT_MD = PROJECT_ROOT / "reports" / "packer_axis_sim_summary.md"
@@ -50,14 +52,16 @@ def write_summary(
     stdout_tail = "\n".join(output.splitlines()[-40:])
 
     summary = {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "schema_version": 1,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "sim": "packer_axis",
         "pass": passed,
         "tool": tool_name,
         "tool_version": tool_ver,
         "vvp_version": vvp_ver,
-        "command": command,
-        "log": str(REPORT_LOG.relative_to(PROJECT_ROOT)),
+        "command": " && ".join(command),
+        "source_tree_hash": compute_source_tree_hash(PROJECT_ROOT),
+        "log_file": str(REPORT_LOG.relative_to(PROJECT_ROOT)),
         "returncode": returncode,
         "stdout_tail": stdout_tail,
     }
@@ -69,14 +73,14 @@ def write_summary(
     lines: list[str] = [
         "# AXI-Stream Packer Simulation Summary",
         "",
-        f"Timestamp UTC: `{summary['timestamp_utc']}`",
+        f"Timestamp UTC: `{summary['generated_at_utc']}`",
         "",
         f"Pass: **{passed}**",
         f"Return code: `{returncode}`",
         f"Tool: `{tool_name}`",
         f"Icarus version: `{tool_ver}`",
         f"VVP version: `{vvp_ver}`",
-        f"Log: `{summary['log']}`",
+        f"Log: `{summary['log_file']}`",
         "",
         "## Output tail",
         "",

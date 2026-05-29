@@ -11,6 +11,14 @@ LOG_PATH = PROJECT_ROOT / "reports" / "make_validate.log"
 
 
 def main() -> int:
+    subprocess.run(
+        ["python3", "scripts/clean_generated_artifacts.py"],
+        cwd=PROJECT_ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
     proc = subprocess.run(
         ["make", "validate"],
         cwd=PROJECT_ROOT,

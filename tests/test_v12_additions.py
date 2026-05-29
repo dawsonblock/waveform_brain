@@ -27,6 +27,7 @@ class TestV12Additions(unittest.TestCase):
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            timeout=120,
         )
         self.assertEqual(proc.returncode, 0, proc.stdout)
         lines = [ln for ln in out.read_text().splitlines() if ln and not ln.startswith("#")]

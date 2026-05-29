@@ -10,7 +10,8 @@
 // Assumptions:
 //   - Multi-bit configuration changes are transferred with xpm_cdc_handshake.
 //   - Command strobes are transferred with xpm_cdc_pulse.
-//   - Fabric counters are transferred with xpm_cdc_gray.
+//   - Monotonic fabric counters are transferred with xpm_cdc_gray.
+//   - Telemetry window payload is transferred coherently with handshake.
 //   - Single-bit status/control signals use xpm_cdc_single or array sync.
 //
 // This module is intended for Vivado/AMD-Xilinx flows where XPM_CDC primitives
@@ -108,6 +109,9 @@ module waveform_brain_cdc_wrapper #(
     logic [CFG_WIDTH-1:0] axi_cfg_bus;
     logic [CFG_WIDTH-1:0] fab_cfg_bus;
     logic                 fab_cfg_req;
+    localparam int TELEM_WIDTH = 64;
+    logic [TELEM_WIDTH-1:0] fab_telem_bus;
+    logic [TELEM_WIDTH-1:0] axi_telem_bus;
 
     always_comb begin
         axi_cfg_bus = {
@@ -121,6 +125,12 @@ module waveform_brain_cdc_wrapper #(
             axi_alpha,
             axi_kill_threshold,
             axi_telem_window_cycles
+        };
+
+        // Cross telemetry window results coherently on sample_done.
+        fab_telem_bus = {
+            fab_telem_flips_delta,
+            fab_telem_total_flips
         };
     end
 
@@ -237,18 +247,28 @@ module waveform_brain_cdc_wrapper #(
         .dest_out (axi_telem_sample_active)
     );
 
-    xpm_cdc_pulse #(
+    xpm_cdc_handshake #(
+        .DEST_EXT_HSK   (0),
         .DEST_SYNC_FF   (3),
         .INIT_SYNC_FF   (0),
-        .REG_OUTPUT     (1),
-        .RST_USED       (0),
-        .SIM_ASSERT_CHK (1)
-    ) u_telem_done_pulse (
-        .src_clk    (fabric_clk),
-        .src_pulse  (fab_telem_sample_done),
-        .dest_clk   (axi_clk),
-        .dest_pulse (axi_telem_sample_done)
+        .SIM_ASSERT_CHK (1),
+        .SRC_SYNC_FF    (3),
+        .WIDTH          (TELEM_WIDTH)
+    ) u_telem_payload_hs (
+        .src_clk  (fabric_clk),
+        .src_in   (fab_telem_bus),
+        .src_send (fab_telem_sample_done),
+        .src_rcv  (),
+        .dest_clk (axi_clk),
+        .dest_req (axi_telem_sample_done),
+        .dest_ack (),
+        .dest_out (axi_telem_bus)
     );
+
+    assign {
+        axi_telem_flips_delta,
+        axi_telem_total_flips
+    } = axi_telem_bus;
 
     // Status bitfields. These are treated as diagnostic snapshots. Multi-bit
     // counters below use gray synchronizers.
@@ -305,21 +325,6 @@ module waveform_brain_cdc_wrapper #(
     );
 
     // Fabric counters into AXI with xpm_cdc_gray.
-    xpm_cdc_gray #(.DEST_SYNC_FF(3), .INIT_SYNC_FF(0), .REG_OUTPUT(1), .SIM_ASSERT_CHK(1), .WIDTH(32))
-    u_telem_flips_delta_gray (
-        .src_clk      (fabric_clk),
-        .src_in_bin   (fab_telem_flips_delta),
-        .dest_clk     (axi_clk),
-        .dest_out_bin (axi_telem_flips_delta)
-    );
-
-    xpm_cdc_gray #(.DEST_SYNC_FF(3), .INIT_SYNC_FF(0), .REG_OUTPUT(1), .SIM_ASSERT_CHK(1), .WIDTH(32))
-    u_telem_total_flips_gray (
-        .src_clk      (fabric_clk),
-        .src_in_bin   (fab_telem_total_flips),
-        .dest_clk     (axi_clk),
-        .dest_out_bin (axi_telem_total_flips)
-    );
 
     xpm_cdc_gray #(.DEST_SYNC_FF(3), .INIT_SYNC_FF(0), .REG_OUTPUT(1), .SIM_ASSERT_CHK(1), .WIDTH(32))
     u_health_safety_trip_gray (

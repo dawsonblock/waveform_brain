@@ -20,11 +20,12 @@ clocks may differ.
 ## Crossing policy
 
 | Signal class | Direction | Mechanism |
-|---|---|---|
+| --- | --- | --- |
 | Coherent config bus | AXI to fabric | `xpm_cdc_handshake` |
 | Command pulses | AXI to fabric | `xpm_cdc_pulse` |
 | Safety kill | Fabric to AXI | `xpm_cdc_single` |
 | Diagnostic bitfields | Fabric to AXI | `xpm_cdc_array_single` |
+| Telemetry window payload/event | Fabric to AXI | `xpm_cdc_handshake` |
 | Counters | Fabric to AXI | `xpm_cdc_gray` |
 
 ## Preferred integration top

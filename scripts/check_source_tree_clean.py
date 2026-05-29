@@ -45,6 +45,7 @@ ALLOWED_REPORT_LOGS = {
     "reports/axilite_regfile_sim.log",
     "reports/packer_axis_sim.log",
     "reports/safety_monitor_sim.log",
+    "reports/prbs_datapath_sim.log",
 }
 
 

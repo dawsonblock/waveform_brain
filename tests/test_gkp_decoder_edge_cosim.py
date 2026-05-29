@@ -35,6 +35,7 @@ class TestGkpDecoderEdgeCosim(unittest.TestCase):
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            timeout=120,
         )
         self.assertEqual(proc.returncode, 0, proc.stdout)
         lines = [
@@ -68,6 +69,7 @@ class TestGkpDecoderEdgeCosim(unittest.TestCase):
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                timeout=120,
             )
             self.assertEqual(gen.returncode, 0, gen.stdout)
 
@@ -82,6 +84,7 @@ class TestGkpDecoderEdgeCosim(unittest.TestCase):
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                timeout=180,
             )
             self.assertEqual(proc.returncode, 0, proc.stdout)
         finally:

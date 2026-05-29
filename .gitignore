@@ -29,6 +29,7 @@ reports/*.log
 !reports/axilite_regfile_sim.log
 !reports/packer_axis_sim.log
 !reports/safety_monitor_sim.log
+!reports/prbs_datapath_sim.log
 
 # Generated register and CDC artifacts
 register_map.json

@@ -1,6 +1,6 @@
 # RTL Arithmetic Audit
 
-Files scanned: `18`
+Files scanned: `19`
 Pass: **True**
 Critical count: `0`
 Warning count: `0`

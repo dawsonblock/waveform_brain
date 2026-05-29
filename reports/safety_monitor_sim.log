@@ -1,5 +1,8 @@
 rtl/safety_monitor.v:7: warning: timescale for safety_monitor inherited from another file.
 sim/tb_safety_monitor.sv:1: ...: The inherited timescale is here.
 rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
 
 TB_PASS tb_safety_monitor

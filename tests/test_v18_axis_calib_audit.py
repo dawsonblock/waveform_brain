@@ -10,7 +10,8 @@ class TestV18AxisCalibAudit(unittest.TestCase):
         self.assertIn("m_axis_tvalid <= 1'b1;", text)
         self.assertIn("Hold beat 0 stable until accepted", text)
         self.assertIn("Hold beat 1 stable until accepted", text)
-        self.assertIn("4'h1", text)
+        self.assertIn("pack_meta = {4'h2", text)
+        self.assertNotIn("pack_meta = {4'h1", text)
 
     def test_registers_include_guard_contains_health_defs(self):
         text = Path("firmware/registers.h").read_text()
@@ -31,6 +32,7 @@ class TestV18AxisCalibAudit(unittest.TestCase):
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            timeout=60,
         )
         self.assertEqual(proc.returncode, 0, proc.stdout)
 

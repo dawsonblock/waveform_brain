@@ -31,6 +31,16 @@ class TestV21PrbsSafetyHardening(unittest.TestCase):
             text,
         )
 
+    def test_prbs_datapath_sim_target_present(self):
+        makefile = Path("Makefile").read_text()
+        self.assertIn("sim-prbs:", makefile)
+        self.assertIn("scripts/run_prbs_datapath_sim.py", makefile)
+
+    def test_prbs_datapath_testbench_exists(self):
+        self.assertTrue(Path("sim/tb_prbs_datapath.sv").exists())
+        tb = Path("sim/tb_prbs_datapath.sv").read_text()
+        self.assertIn("TB_PASS tb_prbs_datapath", tb)
+
 
 if __name__ == "__main__":
     unittest.main()

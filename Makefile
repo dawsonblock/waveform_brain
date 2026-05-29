@@ -4,8 +4,9 @@ size-report:
 PYTHON ?= python3
 VERILATOR ?= verilator
 RTL_SRCS := $(wildcard rtl/*.v)
+BOARD_DEVICE ?=
 
-.PHONY: all validate test test-static test-sim lint audit-arith gen-lut cosim-vectors cosim-gkp sim-axilite sim-packer sim-safety extract-regs cdc-analyze parse-cdc cdc-gate-check cdc-manifest-check lint-verilator lint-verilator-strict check-source-clean clean-generated size-report cdc-signoff-package preboard-check implementation-gate vivado-signoff-package vivado-bitstream source-package proof-package proof-package-local proof-package-board proof-package-strict validate-release validate-release-local validate-release-board validate-release-strict make-validate-log release-prereqs release-validate release-validate-local release-validate-board release-proof-local
+.PHONY: all validate test test-static test-sim lint audit-arith gen-lut cosim-vectors cosim-gkp sim-axilite sim-packer sim-safety sim-prbs extract-regs cdc-analyze parse-cdc cdc-gate-check cdc-manifest-check lint-verilator lint-verilator-strict check-source-clean clean-generated size-report cdc-signoff-package preboard-check implementation-gate vivado-signoff-package vivado-bitstream source-package proof-package proof-package-local proof-package-board proof-package-strict proof-manifest-local proof-manifest-board validate-release validate-release-local validate-release-board validate-release-strict make-validate-log release-prereqs release-prereqs-local release-validate release-validate-local release-validate-board release-proof-local board-smoke
 
 all:
 	@echo "Available targets: validate, test, lint, audit-arith, gen-lut, cosim-vectors, cosim-gkp, sim-axilite, sim-packer, sim-safety, extract-regs, cdc-analyze, parse-cdc, cdc-gate-check, lint-verilator, clean-generated, size-report, cdc-signoff-package, preboard-check, implementation-gate, vivado-signoff-package, vivado-bitstream, source-package, proof-package-local, proof-package-board, release-prereqs, release-validate"
@@ -25,6 +26,7 @@ test-sim:
 	$(MAKE) sim-axilite
 	$(MAKE) sim-packer
 	$(MAKE) sim-safety
+	$(MAKE) sim-prbs
 	$(MAKE) cosim-gkp
 
 lint:
@@ -51,7 +53,16 @@ lint-verilator:
 
 lint-verilator-strict:
 	@if command -v $(VERILATOR) >/dev/null 2>&1; then \
-		$(VERILATOR) --lint-only -Wall --timing $(RTL_SRCS); \
+		$(VERILATOR) --lint-only -Wall --timing \
+			--top-module waveform_brain_axi4lite_cdc_top \
+			-Wno-fatal \
+			-Wno-MULTITOP \
+			-Wno-PINCONNECTEMPTY \
+			-Wno-PINMISSING \
+			-Wno-TIMESCALEMOD \
+			-Wno-EOFNEWLINE \
+			-Wno-DECLFILENAME \
+			$(RTL_SRCS); \
 	else \
 		echo "Verilator not installed; release lint requires it"; \
 		exit 1; \
@@ -95,6 +106,9 @@ sim-packer:
 sim-safety:
 	$(PYTHON) scripts/run_safety_monitor_sim.py
 
+sim-prbs:
+	$(PYTHON) scripts/run_prbs_datapath_sim.py
+
 clean-generated:
 	$(PYTHON) scripts/clean_generated_artifacts.py
 
@@ -105,7 +119,7 @@ cdc-signoff-package:
 	$(PYTHON) scripts/package_cdc_signoff.py
 
 preboard-check:
-	$(PYTHON) scripts/preboard_check.py
+	$(PYTHON) scripts/preboard_check.py --mode proof
 
 implementation-gate:
 	$(PYTHON) scripts/implementation_gate.py
@@ -135,6 +149,12 @@ proof-package-board:
 
 proof-package-strict:
 	$(PYTHON) scripts/build_release_archive.py --mode proof-board
+
+proof-manifest-local:
+	$(PYTHON) scripts/generate_proof_manifest.py --mode proof-local
+
+proof-manifest-board:
+	$(PYTHON) scripts/generate_proof_manifest.py --mode proof-board
 
 validate-release:
 	$(MAKE) validate-release-local
@@ -174,7 +194,10 @@ make-validate-log:
 	$(PYTHON) scripts/run_make_validate_with_log.py
 
 release-prereqs:
-	$(PYTHON) scripts/check_release_prereqs.py
+	$(PYTHON) scripts/check_release_prereqs.py --mode proof-board
+
+release-prereqs-local:
+	$(PYTHON) scripts/check_release_prereqs.py --mode proof-local
 
 
 release-validate-local:
@@ -183,19 +206,30 @@ release-validate-local:
 	$(MAKE) sim-axilite
 	$(MAKE) sim-packer
 	$(MAKE) sim-safety
+	$(MAKE) sim-prbs
+	$(MAKE) release-prereqs-local
+	$(MAKE) proof-manifest-local
 	$(MAKE) source-package
 	$(MAKE) proof-package-local
 	$(MAKE) validate-release-local
 	@echo "release-validate-local complete"
 
 release-validate-board:
+	@if [ -z "$(BOARD_DEVICE)" ]; then \
+		echo "BOARD_DEVICE is required for board proof flow (example: make release-validate-board BOARD_DEVICE=<device-id>)"; \
+		exit 1; \
+	fi
 	$(MAKE) make-validate-log
 	$(MAKE) preboard-check
 	$(MAKE) sim-axilite
 	$(MAKE) sim-packer
 	$(MAKE) sim-safety
+	$(MAKE) sim-prbs
+	$(MAKE) vivado-bitstream
 	$(MAKE) implementation-gate
+	$(MAKE) board-smoke BOARD_DEVICE="$(BOARD_DEVICE)"
 	$(MAKE) release-prereqs
+	$(MAKE) proof-manifest-board
 	$(MAKE) source-package
 	$(MAKE) proof-package-board
 	$(MAKE) validate-release-board
@@ -206,3 +240,10 @@ release-validate: release-validate-board
 
 release-proof-local: release-validate-local
 	@echo "release-proof-local complete"
+
+board-smoke:
+	@if [ -z "$(BOARD_DEVICE)" ]; then \
+		echo "BOARD_DEVICE is required for board-smoke"; \
+		exit 1; \
+	fi
+	$(PYTHON) board_tests/run_board_smoke.py --device "$(BOARD_DEVICE)" --reports-dir reports

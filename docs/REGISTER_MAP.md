@@ -23,7 +23,9 @@ firmware (e.g. `0x4000_0000`). All offsets are in bytes.
 - `0x40` `TELEM_FLIPS_DELTA` (`R`): flips in last completed telemetry window.
 - `0x44` `TELEM_TOTAL_FLIPS` (`R`): running total flips since last clear.
 
-**Note:** The register file uses a simple single‑cycle handshake for reads and writes in this reference implementation. A production design should implement a proper AXI‑Lite interface with ready/valid handshaking.
+**Note:** The preferred path is `rtl/axilite_regfile_full.v`, which implements proper
+AXI-Lite ready/valid handshaking and staged configuration registers. Runtime
+configuration updates are committed atomically via `CFG_APPLY` at `0x70`.
 
 ## Health Monitor Registers
 

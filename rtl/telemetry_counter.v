@@ -84,6 +84,7 @@ module telemetry_counter (
                 // Detect flips across all channels in this cycle
                 integer i;
                 logic [2:0] flip_sum;
+                logic [31:0] delta_next;
                 flip_sum = 3'd0;
                 for (i = 0; i < 4; i++) begin
                     // A flip is counted only when the channel asserts valid
@@ -98,10 +99,11 @@ module telemetry_counter (
                 end
                 // Accumulate delta_count with saturation
                 if (delta_count <= (32'hFFFFFFFF - flip_sum)) begin
-                    delta_count <= delta_count + flip_sum;
+                    delta_next = delta_count + flip_sum;
                 end else begin
-                    delta_count <= 32'hFFFFFFFF;
+                    delta_next = 32'hFFFFFFFF;
                 end
+                delta_count <= delta_next;
                 // Increment window counter
                 window_counter <= window_counter + 1;
                 // Check for end of window
@@ -109,11 +111,11 @@ module telemetry_counter (
                     // Window completed
                     sample_active_reg <= 1'b0;
                     sample_done_reg   <= 1'b1;
-                    flips_delta       <= delta_count;
+                    flips_delta       <= delta_next;
                     // Accumulate into total_count unless a clear command is pending
                     if (!clear_total) begin
-                        if (total_count <= (32'hFFFFFFFF - delta_count)) begin
-                            total_count <= total_count + delta_count;
+                        if (total_count <= (32'hFFFFFFFF - delta_next)) begin
+                            total_count <= total_count + delta_next;
                         end else begin
                             total_count <= 32'hFFFFFFFF;
                         end

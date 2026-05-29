@@ -12,6 +12,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DIST_DIR = PROJECT_ROOT / "dist"
 
 SOURCE_DIRS = [
+    ".github",
+    ".trunk",
+    "board_tests",
     "constraints",
     "docs",
     "firmware",
@@ -33,6 +36,7 @@ SOURCE_EXCLUDES = {
     "__MACOSX",
     "sim/build",
     "build_dir",
+    "reports",
     "sim/gkp_cosim_vectors.hex",
     "rtl/reciprocal_lut_w16_q24w25.mem",
     "reciprocal_lut_w16_q24w25.mem",
@@ -55,22 +59,37 @@ SOURCE_EXCLUDE_SUFFIXES = {
 PROOF_LOCAL_REQUIRED = [
     "reports/preboard_local_summary.json",
     "reports/preboard_local_summary.md",
+    "reports/local_toolchain_summary.json",
+    "reports/source_tree_hash_summary.json",
+    "reports/source_tree_hash.txt",
+    "reports/source_tree_clean_summary.json",
+    "reports/cdc_static_summary.json",
+    "reports/register_map.json",
     "reports/unittest.log",
     "reports/make_validate.log",
-    "reports/cosim_gkp.log",
+    "reports/gkp_decoder_sim.log",
     "reports/axilite_regfile_sim_summary.json",
     "reports/axilite_regfile_sim.log",
     "reports/packer_axis_sim_summary.json",
     "reports/packer_axis_sim.log",
     "reports/safety_monitor_sim_summary.json",
     "reports/safety_monitor_sim.log",
+    "reports/prbs_datapath_sim_summary.json",
+    "reports/prbs_datapath_sim.log",
+    "reports/gkp_decoder_sim_summary.json",
     "reports/rtl_arithmetic_audit.json",
     "reports/rtl_arithmetic_audit.md",
+    "reports/rtl_arithmetic_audit.log",
+    "reports/rtl_sanity.log",
+    "reports/release_prereq_summary_local.json",
+    "reports/proof_manifest_local.json",
 ]
 
 PROOF_BOARD_REQUIRED = [
     "reports/implementation_gate_summary.json",
     "reports/implementation_gate_summary.md",
+    "reports/board_smoke_summary.json",
+    "reports/board_capture_summary.json",
     "reports/cdc_critical_summary.json",
     "reports/cdc_cell_match_summary.md",
     "reports/timing_summary.rpt",
@@ -79,30 +98,10 @@ PROOF_BOARD_REQUIRED = [
     "reports/cdc_critical.rpt",
     "reports/clock_interaction.rpt",
     "reports/utilization.rpt",
-    "reports/cosim_gkp.log",
     "reports/vivado_synth.log",
     "reports/vivado_impl.log",
-]
-
-PROOF_OPTIONAL = [
-    "reports/implementation_gate_summary.json",
-    "reports/implementation_gate_summary.md",
-    "reports/axilite_regfile_sim_summary.md",
-    "reports/packer_axis_sim_summary.md",
-    "reports/safety_monitor_sim_summary.md",
-    "reports/cdc_critical_summary.json",
-    "reports/cdc_cell_match_summary.md",
-    "reports/cdc_full_summary.json",
-    "reports/timing_summary.rpt",
-    "reports/drc.rpt",
-    "reports/clock_interaction.rpt",
-    "reports/utilization.rpt",
-    "reports/cdc_critical.rpt",
-    "reports/cdc_full.rpt",
-    "reports/rtl_arithmetic_audit.json",
-    "reports/rtl_arithmetic_audit.md",
-    "docs/PHASE1_SIGNOFF_SHEET.md",
-    "docs/BOARD_READY_TEMPLATE.md",
+    "reports/release_prereq_summary_board.json",
+    "reports/proof_manifest_board.json",
 ]
 
 
@@ -160,11 +159,6 @@ def collect_proof_files(*, mode: str) -> tuple[list[Path], list[str]]:
         else:
             missing_required.append(rel)
 
-    for rel in PROOF_OPTIONAL:
-        path = PROJECT_ROOT / rel
-        if path.exists():
-            files.append(path)
-
     return sorted(set(files)), missing_required
 
 
@@ -182,7 +176,14 @@ def main() -> int:
     )
     parser.add_argument(
         "--mode",
-        choices=["source", "proof", "proof-local", "proof-board"],
+        choices=[
+            "source",
+            "proof",
+            "proof-local",
+            "proof-board",
+            "board-impl",
+            "board-capture",
+        ],
         required=True,
         help="Archive type to build.",
     )
@@ -202,6 +203,10 @@ def main() -> int:
     mode = args.mode
     if mode == "proof":
         mode = "proof-local"
+    if mode == "board-impl":
+        mode = "proof-board"
+    if mode == "board-capture":
+        mode = "proof-board"
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out_path = args.out or DIST_DIR / f"{args.name}-{mode}-{stamp}.zip"

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -17,16 +18,50 @@ TYPE_MAP = {
 }
 
 
-def required_primitive_types(manifest: dict[str, object]) -> set[str]:
-    primitives: set[str] = set()
+def normalize_entry(
+    crossing_name: str,
+    crossing_spec: object,
+) -> tuple[str, str, str] | None:
+    primitive: str | None = None
+    instance: str | None = None
+
+    if isinstance(crossing_spec, str):
+        primitive = crossing_spec
+    elif isinstance(crossing_spec, dict):
+        raw_primitive = crossing_spec.get("primitive")
+        raw_instance = crossing_spec.get("wrapper_instance")
+        if isinstance(raw_primitive, str):
+            primitive = raw_primitive
+        if isinstance(raw_instance, str):
+            instance = raw_instance
+
+    if not primitive:
+        return None
+
+    primitive = TYPE_MAP.get(primitive, primitive)
+    return crossing_name, primitive, instance or ""
+
+
+def required_crossings(
+    manifest: dict[str, object],
+) -> list[tuple[str, str, str]]:
+    entries: list[tuple[str, str, str]] = []
     for direction in manifest.values():
         if not isinstance(direction, dict):
             continue
-        for crossing_type in direction.values():
-            if not isinstance(crossing_type, str):
+        for crossing_name, crossing_spec in direction.items():
+            if not isinstance(crossing_name, str):
                 continue
-            primitive = TYPE_MAP.get(crossing_type, crossing_type)
-            primitives.add(primitive)
+            normalized = normalize_entry(crossing_name, crossing_spec)
+            if normalized is not None:
+                entries.append(normalized)
+    return entries
+
+
+def required_primitive_types(manifest: dict[str, object]) -> set[str]:
+    primitives: set[str] = set()
+    for _, primitive, _ in required_crossings(manifest):
+        primitives.add(primitive)
     return primitives
 
 
@@ -57,6 +92,14 @@ def report_has_nonzero_match(report_text: str, primitive: str) -> bool:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Verify CDC manifest")
+    parser.add_argument(
+        "--static-only",
+        action="store_true",
+        help="Skip cdc_cell_match_summary.md checks.",
+    )
+    args = parser.parse_args()
+
     if not MANIFEST_PATH.exists():
         rel_manifest = MANIFEST_PATH.relative_to(PROJECT_ROOT)
         print(f"cdc-manifest-fail: missing {rel_manifest}")
@@ -65,7 +108,7 @@ def main() -> int:
         rel_wrapper = WRAPPER_PATH.relative_to(PROJECT_ROOT)
         print(f"cdc-manifest-fail: missing {rel_wrapper}")
         return 1
-    if not CELLMATCH_PATH.exists():
+    if not args.static_only and not CELLMATCH_PATH.exists():
         rel_cellmatch = CELLMATCH_PATH.relative_to(PROJECT_ROOT)
         print(f"cdc-manifest-fail: missing {rel_cellmatch}")
         return 1
@@ -76,21 +119,31 @@ def main() -> int:
         return 1
 
     wrapper_text = WRAPPER_PATH.read_text(encoding="utf-8")
-    report_text = CELLMATCH_PATH.read_text(encoding="utf-8")
+    report_text = ""
+    if not args.static_only:
+        report_text = CELLMATCH_PATH.read_text(encoding="utf-8")
 
     failures: list[str] = []
-    for primitive in sorted(required_primitive_types(manifest)):
-        wrapper_count = count_primitive_in_wrapper(wrapper_text, primitive)
-        if wrapper_count == 0:
+    for crossing_name, primitive, instance in required_crossings(manifest):
+        if count_primitive_in_wrapper(wrapper_text, primitive) == 0:
             failures.append(
-                f"required primitive missing in wrapper: {primitive}"
+                "required primitive missing in wrapper: "
+                f"{crossing_name} -> {primitive}"
             )
             continue
-        if not report_has_nonzero_match(report_text, primitive):
+        if instance and instance not in wrapper_text:
             failures.append(
-                "required primitive has zero/missing cell "
-                f"matches: {primitive}"
+                "required wrapper instance missing: "
+                f"{crossing_name} -> {instance}"
             )
+
+    if not args.static_only:
+        for primitive in sorted(required_primitive_types(manifest)):
+            if not report_has_nonzero_match(report_text, primitive):
+                failures.append(
+                    "required primitive has zero/missing cell "
+                    f"matches: {primitive}"
+                )
 
     if failures:
         print("cdc-manifest-fail")

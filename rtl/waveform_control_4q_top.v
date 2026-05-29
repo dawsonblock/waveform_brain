@@ -168,8 +168,9 @@ module waveform_control_4q_top #(
         .stall_count    (axis_fifo_stall_count)
     );
 
-    // Simple status word combining kill flag and valid outs
-    assign status_word = {safety_kill, dec_valid_out, 12'h0};
+    // Status word layout (16b): [15]=safety_kill, [14:11]=dec_valid_out,
+    // [10:0]=reserved.
+    assign status_word = {safety_kill, dec_valid_out, 11'h0};
 
     // Telemetry counter for syndrome flip rate (windowed measurement)
     telemetry_counter telemetry_inst (

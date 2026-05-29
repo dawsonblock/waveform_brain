@@ -14,6 +14,14 @@ class TestCDCv14Static(unittest.TestCase):
         ]:
             self.assertIn(token, text)
 
+    def test_telemetry_payload_uses_handshake_not_gray(self):
+        text = Path("rtl/waveform_brain_cdc_wrapper.v").read_text()
+        self.assertIn("u_telem_payload_hs", text)
+        self.assertIn(".src_send (fab_telem_sample_done)", text)
+        self.assertIn(".dest_req (axi_telem_sample_done)", text)
+        self.assertNotIn("u_telem_flips_delta_gray", text)
+        self.assertNotIn("u_telem_total_flips_gray", text)
+
     def test_cdc_top_exists(self):
         text = Path("rtl/waveform_brain_axi4lite_cdc_top.v").read_text()
         self.assertIn("fabric_clk", text)

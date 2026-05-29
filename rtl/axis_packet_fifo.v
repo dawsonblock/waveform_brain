@@ -43,7 +43,8 @@ module axis_packet_fifo #(
 
     assign s_axis_tready = !full;
     assign m_axis_tvalid = !empty;
-    assign {m_axis_tlast, m_axis_tdata} = mem[rd_ptr];
+    // Drive known values when empty for cleaner sim/formal behavior.
+    assign {m_axis_tlast, m_axis_tdata} = empty ? '0 : mem[rd_ptr];
     assign level = count;
 
     function automatic [31:0] sat_inc(input [31:0] value);

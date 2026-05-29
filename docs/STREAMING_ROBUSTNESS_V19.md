@@ -56,6 +56,10 @@ packer_axis -> axis_packet_fifo -> DMA/host stream
 
 This absorbs short downstream stalls and exposes diagnostics.
 
+`axis_packet_fifo.v` now drives `{m_axis_tlast, m_axis_tdata}` to zero when
+empty while keeping `m_axis_tvalid=0`, which improves simulation/formal
+readability without changing handshake semantics.
+
 ## New AXI-Lite readback registers
 
 ```text
@@ -65,6 +69,11 @@ This absorbs short downstream stalls and exposes diagnostics.
 0x68 WB_REG_AXIS_FRAME_DROPS
 0x6C WB_REG_AXIS_SEQUENCE
 ```
+
+`WB_REG_AXIS_FRAME_DROPS` is the packer busy-valid-cycle counter: it increments
+when a complete input frame is present while the two-beat packetizer is still
+busy. It is a conservative pressure indicator, not an exact decoded-frame loss
+counter under all traffic patterns.
 
 ## Host validation
 

@@ -18,9 +18,13 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from hash_source_tree import compute_source_tree_hash  # type: ignore
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-REPORT_LOG = PROJECT_ROOT / "reports" / "cosim_gkp.log"
-REPORT_JSON = PROJECT_ROOT / "reports" / "cosim_gkp_summary.json"
+REPORT_LOG = PROJECT_ROOT / "reports" / "gkp_decoder_sim.log"
+REPORT_JSON = PROJECT_ROOT / "reports" / "gkp_decoder_sim_summary.json"
+LEGACY_REPORT_LOG = PROJECT_ROOT / "reports" / "cosim_gkp.log"
+LEGACY_REPORT_JSON = PROJECT_ROOT / "reports" / "cosim_gkp_summary.json"
 
 
 def run(cmd: list[str], *, cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -54,18 +58,26 @@ def write_summary(
 ) -> None:
     REPORT_LOG.parent.mkdir(parents=True, exist_ok=True)
     REPORT_LOG.write_text(output, encoding="utf-8")
+    LEGACY_REPORT_LOG.write_text(output, encoding="utf-8")
+    source_tree_hash = compute_source_tree_hash(PROJECT_ROOT)
     summary = {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "sim": "gkp_cosim",
+        "schema_version": 1,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "sim": "gkp_decoder",
         "pass": passed,
         "tool": "iverilog",
         "tool_version": tool_ver,
         "vvp_version": vvp_ver,
-        "command": command,
-        "log": str(REPORT_LOG.relative_to(PROJECT_ROOT)),
+        "command": " && ".join(command),
+        "source_tree_hash": source_tree_hash,
+        "log_file": str(REPORT_LOG.relative_to(PROJECT_ROOT)),
         "returncode": returncode,
     }
     REPORT_JSON.write_text(
+        json.dumps(summary, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    LEGACY_REPORT_JSON.write_text(
         json.dumps(summary, indent=2) + "\n",
         encoding="utf-8",
     )

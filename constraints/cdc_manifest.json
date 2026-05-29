@@ -1,15 +1,91 @@
 {
   "axi_to_fabric": {
-    "config_bus": "xpm_cdc_handshake",
-    "cfg_update": "xpm_cdc_pulse",
-    "clear_faults": "xpm_cdc_pulse",
-    "telemetry_start": "xpm_cdc_pulse",
-    "telemetry_clear": "xpm_cdc_pulse"
+    "config_bus_commit": {
+      "primitive": "xpm_cdc_handshake",
+      "wrapper_instance": "u_cfg_hs",
+      "note": "cfg_update crosses as src_send on handshake"
+    },
+    "clear_faults_pulse": {
+      "primitive": "xpm_cdc_pulse",
+      "wrapper_instance": "u_clear_faults_pulse"
+    },
+    "telem_start_pulse": {
+      "primitive": "xpm_cdc_pulse",
+      "wrapper_instance": "u_telem_start_pulse"
+    },
+    "telem_clear_pulse": {
+      "primitive": "xpm_cdc_pulse",
+      "wrapper_instance": "u_telem_clear_pulse"
+    }
   },
   "fabric_to_axi": {
-    "safety_kill": "xpm_cdc_single",
-    "fault_flags": "diagnostic_snapshot",
-    "status_word": "diagnostic_snapshot",
-    "counters": "xpm_cdc_gray"
+    "safety_kill": {
+      "primitive": "xpm_cdc_single",
+      "wrapper_instance": "u_safety_kill_single"
+    },
+    "telem_active": {
+      "primitive": "xpm_cdc_single",
+      "wrapper_instance": "u_telem_active_single"
+    },
+    "telem_done_event": {
+      "primitive": "xpm_cdc_handshake",
+      "wrapper_instance": "u_telem_payload_hs"
+    },
+    "fault_flags_snapshot": {
+      "primitive": "xpm_cdc_array_single",
+      "wrapper_instance": "u_fault_flags_array"
+    },
+    "status_word_snapshot": {
+      "primitive": "xpm_cdc_array_single",
+      "wrapper_instance": "u_status_word_array"
+    },
+    "health_status_snapshot": {
+      "primitive": "xpm_cdc_array_single",
+      "wrapper_instance": "u_health_status_array"
+    },
+    "axis_fifo_level_snapshot": {
+      "primitive": "xpm_cdc_array_single",
+      "wrapper_instance": "u_axis_fifo_level_array"
+    },
+    "telem_flips_delta": {
+      "primitive": "xpm_cdc_handshake",
+      "wrapper_instance": "u_telem_payload_hs"
+    },
+    "telem_total_flips": {
+      "primitive": "xpm_cdc_handshake",
+      "wrapper_instance": "u_telem_payload_hs"
+    },
+    "health_safety_trip_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_health_safety_trip_gray"
+    },
+    "health_axis_stall_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_health_axis_stall_gray"
+    },
+    "health_decoder_valid_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_health_decoder_valid_gray"
+    },
+    "health_telem_done_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_health_telem_done_gray"
+    },
+    "axis_fifo_overflow_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_axis_fifo_overflow_gray"
+    },
+    "axis_fifo_stall_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_axis_fifo_stall_gray"
+    },
+    "axis_frame_drop_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_axis_frame_drop_gray"
+    },
+    "axis_sequence_count": {
+      "primitive": "xpm_cdc_gray",
+      "wrapper_instance": "u_axis_sequence_gray"
+    }
   }
 }

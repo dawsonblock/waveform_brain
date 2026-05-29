@@ -16,6 +16,7 @@ class TestSafetyMonitorBehavior(unittest.TestCase):
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            timeout=120,
         )
         self.assertEqual(proc.returncode, 0, proc.stdout)
         self.assertIn("TB_PASS tb_safety_monitor", proc.stdout)

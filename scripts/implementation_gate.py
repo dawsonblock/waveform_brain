@@ -82,17 +82,70 @@ def timing_pass(path: Path) -> tuple[bool, str]:
     if any(re.search(p, text, re.IGNORECASE) for p in fail_patterns):
         return False, "timing violation text found"
 
-    # Try WNS parse.
-    m = re.search(r"\bWNS\(ns\)\s+([-+]?\d+(?:\.\d+)?)", text)
-    if m and float(m.group(1)) < 0:
-        return False, f"WNS={m.group(1)}"
-    return True, "no negative timing marker found"
+    required_metrics = {
+        "WNS": [r"\bWNS\(ns\)\s*[:=]?\s*([-+]?\d+(?:\.\d+)?)"],
+        "TNS": [r"\bTNS\(ns\)\s*[:=]?\s*([-+]?\d+(?:\.\d+)?)"],
+        "WHS": [r"\bWHS\(ns\)\s*[:=]?\s*([-+]?\d+(?:\.\d+)?)"],
+        "THS": [r"\bTHS\(ns\)\s*[:=]?\s*([-+]?\d+(?:\.\d+)?)"],
+        "WPWS": [r"\bWPWS\(ns\)\s*[:=]?\s*([-+]?\d+(?:\.\d+)?)"],
+        "TPWS": [r"\bTPWS\(ns\)\s*[:=]?\s*([-+]?\d+(?:\.\d+)?)"],
+    }
+
+    parsed_metrics: dict[str, float] = {}
+    missing_metrics: list[str] = []
+    for metric, patterns in required_metrics.items():
+        value = None
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                value = float(match.group(1))
+                break
+        if value is None:
+            missing_metrics.append(metric)
+        else:
+            parsed_metrics[metric] = value
+
+    if missing_metrics:
+        return False, f"missing timing metrics: {','.join(missing_metrics)}"
+
+    negative_metrics = [
+        f"{metric}={parsed_metrics[metric]:.3f}"
+        for metric in ["WNS", "TNS", "WHS", "THS", "WPWS", "TPWS"]
+        if parsed_metrics[metric] < 0.0
+    ]
+    if negative_metrics:
+        return False, f"negative timing metrics: {', '.join(negative_metrics)}"
+
+    detail = ", ".join(
+        f"{metric}={parsed_metrics[metric]:.3f}"
+        for metric in ["WNS", "TNS", "WHS", "THS", "WPWS", "TPWS"]
+    )
+    return True, detail
 
 
 def drc_pass(path: Path) -> tuple[bool, str]:
     if not path.exists():
         return False, "missing drc.rpt"
     text = read_text(path)
+    fail_class_patterns = {
+        "NSTD": r"\bNSTD(?:-[0-9]+)?\b",
+        "UCIO": r"\bUCIO(?:-[0-9]+)?\b",
+        "LUTLP": r"\bLUTLP(?:-[0-9]+)?\b",
+        "MDRV": r"\bMDRV(?:-[0-9]+)?\b",
+        "UNCONSTRAINED_PATH": r"unconstrained\s+path",
+    }
+
+    class_hits = {
+        name: len(re.findall(pattern, text, re.IGNORECASE))
+        for name, pattern in fail_class_patterns.items()
+    }
+    fail_hits = {name: count for name, count in class_hits.items() if count > 0}
+    if fail_hits:
+        detail = ", ".join(
+            f"{name}={count}" for name, count in sorted(fail_hits.items())
+        )
+        return False, f"drc_fail_classes: {detail}"
+
     critical = len(
         re.findall(r"Critical Warning|CRITICAL WARNING|ERROR:", text)
     )

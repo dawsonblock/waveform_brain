@@ -21,6 +21,7 @@ class TestRtlSanityCheckBehavior(unittest.TestCase):
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            timeout=60,
         )
 
     def test_fails_when_no_rtl_files_exist(self):

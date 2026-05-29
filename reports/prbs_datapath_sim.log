@@ -1,0 +1,39 @@
+rtl/prbs_gen.v:7: warning: timescale for prbs_gen inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/safety_monitor.v:7: warning: timescale for safety_monitor inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/telemetry_counter.v:11: warning: timescale for telemetry_counter inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/health_monitor.v:12: warning: timescale for health_monitor inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/axis_skid_buffer.v:6: warning: timescale for axis_skid_buffer inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/axis_packet_fifo.v:8: warning: timescale for axis_packet_fifo inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/packer_axis.v:32: warning: timescale for packer_axis inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/poly_eval.v:12: warning: timescale for poly_eval inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/soft_weighting.v:17: warning: timescale for soft_weighting inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/gkp_decoder.v:10: warning: timescale for gkp_decoder inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/gkp_decoder_4q_wrapper.v:6: warning: timescale for gkp_decoder_4q_wrapper inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/waveform_control_4q_top.v:7: warning: timescale for waveform_control_4q_top inherited from another file.
+sim/tb_prbs_datapath.sv:1: ...: The inherited timescale is here.
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/safety_monitor.v:21: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/gkp_decoder.v:82: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+rtl/axis_packet_fifo.v:90: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
+
+TB_PASS tb_prbs_datapath

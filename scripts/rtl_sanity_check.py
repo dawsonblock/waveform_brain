@@ -8,6 +8,12 @@ import pathlib
 import re
 
 ASSIGN_RE = re.compile(r"\bassign\s+(\w+)\s*=")
+ALWAYS_FF_BLOCK_RE = re.compile(
+    r"always_ff\s*@\((?P<sensitivity>[^)]*)\)\s*begin"
+    r"(?P<body>.*?)"
+    r"(?=\n\s*always_ff\s*@|\n\s*endmodule\b|\Z)",
+    re.DOTALL,
+)
 
 
 def check_unconnected_prbs(file_contents: str, filename: str) -> list[str]:
@@ -28,20 +34,62 @@ def check_duplicate_assigns(
     filename: str,
 ) -> list[str]:
     findings: list[str] = []
-    targets: dict[str, int] = {}
-    for match in ASSIGN_RE.finditer(file_contents):
-        lhs = match.group(1)
-        targets[lhs] = targets.get(lhs, 0) + 1
-    duplicates = [name for name, count in targets.items() if count > 1]
-    for lhs in sorted(duplicates):
-        findings.append(f"ERROR: {filename}: duplicate continuous assign target: {lhs}")
+
+    module_re = re.compile(
+        r"\bmodule\s+([A-Za-z_][A-Za-z0-9_]*)\b(.*?)\bendmodule\b",
+        re.DOTALL,
+    )
+    modules = list(module_re.finditer(file_contents))
+
+    if not modules:
+        modules = [
+            re.match(r"(?s)(.*)", file_contents),
+        ]
+
+    for module_match in modules:
+        if module_match is None:
+            continue
+        module_name = "<file>"
+        module_text = file_contents
+        if module_match.re is module_re:
+            module_name = module_match.group(1)
+            module_text = module_match.group(2)
+
+        targets: dict[str, int] = {}
+        for match in ASSIGN_RE.finditer(module_text):
+            lhs = match.group(1)
+            targets[lhs] = targets.get(lhs, 0) + 1
+
+        duplicates = [name for name, count in targets.items() if count > 1]
+        for lhs in sorted(duplicates):
+            findings.append(
+                f"ERROR: {filename}:{module_name}: "
+                f"duplicate continuous assign target: {lhs}"
+            )
+
     return findings
 
 
 def check_missing_reset(file_contents: str, filename: str):
-    if "always_ff" in file_contents and "rst_n" in file_contents:
-        if "if (!rst_n)" not in file_contents:
-            print(f"WARNING: {filename}: " "always_ff without explicit reset condition")
+    if "always_ff" not in file_contents:
+        return
+
+    for block in ALWAYS_FF_BLOCK_RE.finditer(file_contents):
+        sensitivity = block.group("sensitivity")
+        body = block.group("body")
+        reset_edges = re.findall(
+            r"\bnegedge\s+([A-Za-z_][A-Za-z0-9_]*)",
+            sensitivity,
+        )
+        for reset_sig in sorted(set(reset_edges)):
+            if not re.search(
+                rf"\bif\s*\(\s*(?:!|~)\s*{re.escape(reset_sig)}\s*\)",
+                body,
+            ):
+                print(
+                    f"WARNING: {filename}: always_ff with negedge {reset_sig} "
+                    "without explicit reset condition"
+                )
 
 
 def check_implicit_width(file_contents: str, filename: str):

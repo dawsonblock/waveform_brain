@@ -9,6 +9,13 @@ class TestV19StreamingRobustness(unittest.TestCase):
         self.assertTrue(Path("rtl/axis_packet_fifo.v").exists())
         self.assertTrue(Path("rtl/axis_skid_buffer.v").exists())
 
+    def test_fifo_drives_known_value_when_empty(self):
+        text = Path("rtl/axis_packet_fifo.v").read_text()
+        self.assertIn(
+            "assign {m_axis_tlast, m_axis_tdata} = empty ? '0 : mem[rd_ptr];",
+            text,
+        )
+
     def test_packer_has_sequence_and_drop_counter(self):
         text = Path("rtl/packer_axis.v").read_text()
         self.assertIn("sequence_counter", text)
@@ -21,7 +28,10 @@ class TestV19StreamingRobustness(unittest.TestCase):
         self.assertIn("axis_packet_fifo", text)
         self.assertIn("packer_tdata", text)
         self.assertIn("axis_fifo_overflow_count", text)
-        self.assertLess(text.find("packer_axis"), text.find("axis_packet_fifo"))
+        self.assertLess(
+            text.find("packer_axis"),
+            text.find("axis_packet_fifo"),
+        )
 
     def test_regfile_exposes_streaming_diagnostics(self):
         text = Path("rtl/axilite_regfile_full.v").read_text()
@@ -41,7 +51,10 @@ class TestV19StreamingRobustness(unittest.TestCase):
             self.assertIn(token, text)
 
     def test_packet_parser_v2_sequence(self):
-        from userspace.packet_parser import parse_packet_record, validate_monotonic_sequences
+        from userspace.packet_parser import (
+            parse_packet_record,
+            validate_monotonic_sequences,
+        )
         rec0 = parse_packet_record([0x0004000300020001, 0x2102000000000007])
         rec1 = parse_packet_record([0x0008000700060005, 0x2000000000000008])
         self.assertEqual(rec0.version, 2)
@@ -62,6 +75,7 @@ class TestV19StreamingRobustness(unittest.TestCase):
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                timeout=60,
             )
             self.assertNotEqual(proc.returncode, 0)
             self.assertIn("sequence", proc.stdout)
@@ -70,7 +84,10 @@ class TestV19StreamingRobustness(unittest.TestCase):
         self.assertTrue(Path("formal/packer_axis_properties.sv").exists())
 
     def test_v19_doc_exists(self):
-        self.assertTrue(Path("docs/STREAMING_ROBUSTNESS_V19.md").exists())
+        path = Path("docs/STREAMING_ROBUSTNESS_V19.md")
+        self.assertTrue(path.exists())
+        text = path.read_text()
+        self.assertIn("busy-valid-cycle counter", text)
 
 
 if __name__ == "__main__":

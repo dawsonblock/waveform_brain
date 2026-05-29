@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "mode": "proof-local",
+  "generated_at_utc": "2026-05-29T06:42:22.618111+00:00",
+  "command": "python3 scripts/generate_proof_manifest.py --mode proof-local",
+  "pass": true,
+  "source_tree_hash": "e5c023ec792d5f91a2fce75013acb292fc792469749ac7f9a4a8fbe7797dd069",
+  "required_file_count": 25,
+  "files": [
+    {
+      "path": "reports/preboard_local_summary.json",
+      "size": 21437,
+      "sha256": "ab91152d200f092ccfbcd61aaa7e57212ba78bfaba1ea2bf8c3953918f213821"
+    },
+    {
+      "path": "reports/preboard_local_summary.md",
+      "size": 3231,
+      "sha256": "580652593db1cb2d329efcf00b9f47000adb67b13c2ac9e658396db40a8b71ff"
+    },
+    {
+      "path": "reports/local_toolchain_summary.json",
+      "size": 1340,
+      "sha256": "e4ad0631de9927c83c1aa43b59a5238cddbdd026cc27f36d94b50ec29f65d72e"
+    },
+    {
+      "path": "reports/source_tree_hash_summary.json",
+      "size": 288,
+      "sha256": "5569b27e0ba02bd285f4199d79fa3839c09b7465b85021f6d452dcd9588af521"
+    },
+    {
+      "path": "reports/source_tree_hash.txt",
+      "size": 65,
+      "sha256": "5b5e9bb917af73db27469a8a8f70d4b244d04e9b85521186658d278e04252546"
+    },
+    {
+      "path": "reports/source_tree_clean_summary.json",
+      "size": 296,
+      "sha256": "a624af18c5e16be91008a8afe3ca19b57e6676d50ef0a2b4496b1459c8db809d"
+    },
+    {
+      "path": "reports/cdc_static_summary.json",
+      "size": 343,
+      "sha256": "c81e2b32695a2a825149c6e603cb7b439753a4515d9f406e8566d98c0d399983"
+    },
+    {
+      "path": "reports/register_map.json",
+      "size": 6476,
+      "sha256": "0810d3626a2d8d47801835ac3a0ba4995a94910a76a44a03af9bf4270f8dd6a3"
+    },
+    {
+      "path": "reports/unittest.log",
+      "size": 195,
+      "sha256": "c6e71c60268c809ae1f29673c99c061dcb8515ab1ec579f26684a5c81e226b77"
+    },
+    {
+      "path": "reports/make_validate.log",
+      "size": 3705,
+      "sha256": "e464714adfe3de395a1e1a9adc4ed4b1868828db7c13376e5f9be91c1c39a14c"
+    },
+    {
+      "path": "reports/gkp_decoder_sim.log",
+      "size": 1467,
+      "sha256": "b22e8de83fde7980ffead1da6ac4d373baf5186158fbee31de23223c12b7c8c9"
+    },
+    {
+      "path": "reports/axilite_regfile_sim_summary.json",
+      "size": 1331,
+      "sha256": "424cf4007c6b57e19164e6f528efb455d15d0c42c52bef08281e09f453317683"
+    },
+    {
+      "path": "reports/axilite_regfile_sim.log",
+      "size": 546,
+      "sha256": "222f04c707f5ac4a71f0c263f5f3919bcec2097af47ab5127d7192d6323d9242"
+    },
+    {
+      "path": "reports/packer_axis_sim_summary.json",
+      "size": 1005,
+      "sha256": "5ade4d335d992d1d67e0ae12b3d7e82d262d63aaa22b2e470a9043b12ad1b664"
+    },
+    {
+      "path": "reports/packer_axis_sim.log",
+      "size": 249,
+      "sha256": "e65a71a64fb52e9fa603d43ebc24177930e6c8fecdd14c74e2e4427a82369b7d"
+    },
+    {
+      "path": "reports/safety_monitor_sim_summary.json",
+      "size": 1455,
+      "sha256": "e9c6a289739fade9fa45174b7d0d2aa5bcd482f09e11fc3c22ab8d7aa8166770"
+    },
+    {
+      "path": "reports/safety_monitor_sim.log",
+      "size": 696,
+      "sha256": "b95a3b0c05a751e94a73dd4cb101e6553e0000812745e7f68f6d18d7ead9638d"
+    },
+    {
+      "path": "reports/prbs_datapath_sim_summary.json",
+      "size": 4571,
+      "sha256": "79065629548eb4a04b24ad7371ae3b61d36377a0c75a3d3cc44add591e07c1cf"
+    },
+    {
+      "path": "reports/prbs_datapath_sim.log",
+      "size": 3515,
+      "sha256": "b28adc4f50566cf81365ac9b0113cac39980230ced97bd8668fa9ef3491f927e"
+    },
+    {
+      "path": "reports/gkp_decoder_sim_summary.json",
+      "size": 860,
+      "sha256": "12f20c83cd767fba199e5b22736c87d4d59372ee121974fa9932c8f87aa605ff"
+    },
+    {
+      "path": "reports/rtl_arithmetic_audit.json",
+      "size": 122,
+      "sha256": "714f37a122bf76ae37c4b1c6b052e03287bfac3e070b380499d05f9d7f061458"
+    },
+    {
+      "path": "reports/rtl_arithmetic_audit.md",
+      "size": 163,
+      "sha256": "46a09fc0892051c61f65c2b0b53cb0edf28be7317b9cda43356bbb86bf4cdfa4"
+    },
+    {
+      "path": "reports/rtl_arithmetic_audit.log",
+      "size": 131,
+      "sha256": "420dce3c7d90e6753f5b269daa948bb281ab4e7f6ad0a864a86113ce734e3a52"
+    },
+    {
+      "path": "reports/rtl_sanity.log",
+      "size": 23,
+      "sha256": "da8a696e102bdd41668e22836505ed6c58840c073ccb0ffbaeb4b8225c8e4fd9"
+    },
+    {
+      "path": "reports/release_prereq_summary_local.json",
+      "size": 750,
+      "sha256": "3ab1639ed2bd4ccb479a43ccd7e03081eee6b5ce99c3576c15bf2f4a81d0b50a"
+    }
+  ]
+}

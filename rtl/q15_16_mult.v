@@ -15,38 +15,40 @@ module q15_16_mult (
     output logic         overflow
 );
 
-    // Internal pipeline registers
-    logic signed [63:0] mult_full;
+    // Internal pipeline register holding the sampled product for this cycle.
     logic signed [63:0] mult_full_reg;
-    logic overflow_reg;
     logic valid_reg;
+
+    logic signed [63:0] mult_full_next;
+    logic signed [63:0] rounded_full;
+    logic overflow_comb;
+
+    assign mult_full_next = a * b;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             mult_full_reg <= '0;
-            overflow_reg <= 1'b0;
             valid_reg    <= 1'b0;
         end else begin
             valid_reg    <= valid_in;
-            // Full 64-bit multiplication
-            mult_full    <= a * b;
-            mult_full_reg <= mult_full;
-            // Detect overflow based on upper bits beyond 32-bit range
-            overflow_reg <= (mult_full[63:32] != {32{mult_full[31]}});
+            // Sample product so valid/result/overflow remain cycle-aligned.
+            mult_full_reg <= mult_full_next;
         end
     end
 
-    // Truncate to Q15.16 result with rounding by adding half LSB
+    // Truncate to Q15.16 result with rounding by adding half LSB.
     logic signed [31:0] rounded;
     always_comb begin
-        // Add 2^15 for round-half-up when positive
-        logic signed [63:0] rounded_full;
+        // Add 2^15 before extracting [47:16].
         rounded_full = mult_full_reg + 64'sh0000_0000_0000_8000;
         rounded      = rounded_full[47:16];
     end
 
+    // Overflow if discarded upper bits are not sign extension of result.
+    assign overflow_comb = (rounded_full[63:48] != {16{rounded_full[47]}});
+
     assign valid_out = valid_reg;
     assign result    = rounded;
-    assign overflow  = overflow_reg;
+    assign overflow  = overflow_comb;
 
 endmodule
