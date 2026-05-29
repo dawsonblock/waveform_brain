@@ -47,6 +47,18 @@ jobs:
                   python3 scripts/validate_release_archive.py "$latest_proof" --mode proof-local
                   echo "proof_archive=$latest_proof" >> "$GITHUB_OUTPUT"
 
+            - name: Verify source tree hash consistency
+              run: |
+                  manifest_hash=$(jq -r '.source_tree_hash' reports/proof_manifest_local.json | tr -d '[:space:]')
+                  txt_hash=$(tr -d '[:space:]' < reports/source_tree_hash.txt)
+                  if [ "$manifest_hash" != "$txt_hash" ]; then
+                    echo "Hash mismatch: manifest=$manifest_hash, txt=$txt_hash"
+                    exit 1
+                  fi
+
+            - name: Enforce proof manifest invariants
+              run: make check-proof-invariant
+
             - name: Upload proof-local archive
               uses: actions/upload-artifact@v4
               with:

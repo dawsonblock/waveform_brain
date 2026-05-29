@@ -1,9 +1,13 @@
+`timescale 1ns/1ps
+
 // safety_monitor.v
 // Monitors the ADC values for over‑range conditions and triggers a safety
 // kill signal when a configurable threshold is exceeded. Faults are
 // latched until cleared by clear_faults. Additional variance monitoring
 // can be added in a future version.
 
+
+module safety_monitor #(
 module safety_monitor #(
     parameter int ADC_WIDTH = 16
 )(

@@ -4,7 +4,7 @@ v0.19 focuses on preventing silent packet loss and making calibration output mor
 
 ## Added RTL
 
-- `rtl/axis_skid_buffer.v`
+- `rtl/axis_skid_buffer.v` (simulation-only; not instantiated in deployed hardware design)
 - `rtl/axis_packet_fifo.v`
 
 ## Updated RTL

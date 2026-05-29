@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 // gkp_decoder.v
 //
 // Pipelined soft-decision square-GKP-style decoder for one quadrature.
@@ -7,6 +9,8 @@
 //   - Aligns position/syndrome with poly/weight latency.
 //   - Adds a register before saturation to shorten the final timing path.
 
+
+module gkp_decoder #(
 module gkp_decoder #(
     parameter int ADC_WIDTH   = 16,
     parameter int SCALE_WIDTH = 32

@@ -4,7 +4,7 @@ This document summarises the key improvements and fixes introduced in the upgrad
 
 ## Structural Improvements
 
-- Added `rtl/axis_packet_fifo.v` and `rtl/axis_skid_buffer.v`.
+- Added `rtl/axis_packet_fifo.v` and `rtl/axis_skid_buffer.v` (simulation-only; not instantiated in deployed hardware design).
 - Inserted `axis_packet_fifo` after `packer_axis` in `waveform_control_4q_top.v`.
 - Upgraded packet metadata to format version `4'h2` with a 32-bit sequence counter in beat 1.
 - Added `frame_drop_count`, `sequence_counter`, FIFO level, FIFO overflow, and FIFO stall diagnostics.

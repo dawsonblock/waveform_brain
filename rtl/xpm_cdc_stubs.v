@@ -2,12 +2,12 @@
 // These stubs are for lint/simulation convenience only.
 
 module xpm_cdc_handshake #(
-    parameter int DEST_EXT_HSK = 0,
-    parameter int DEST_SYNC_FF = 2,
-    parameter int INIT_SYNC_FF = 0,
-    parameter int SIM_ASSERT_CHK = 0,
-    parameter int SRC_SYNC_FF = 2,
-    parameter int WIDTH = 1
+    parameter [31:0] DEST_EXT_HSK = 0,
+    parameter [31:0] DEST_SYNC_FF = 2,
+    parameter [31:0] INIT_SYNC_FF = 0,
+    parameter [31:0] SIM_ASSERT_CHK = 0,
+    parameter [31:0] SRC_SYNC_FF = 2,
+    parameter [31:0] WIDTH = 1
 ) (
     input  wire             src_clk,
     input  wire [WIDTH-1:0] src_in,
@@ -28,11 +28,11 @@ module xpm_cdc_handshake #(
 endmodule
 
 module xpm_cdc_pulse #(
-    parameter int DEST_SYNC_FF = 2,
-    parameter int INIT_SYNC_FF = 0,
-    parameter int REG_OUTPUT = 0,
-    parameter int RST_USED = 0,
-    parameter int SIM_ASSERT_CHK = 0
+    parameter [31:0] DEST_SYNC_FF = 2,
+    parameter [31:0] INIT_SYNC_FF = 0,
+    parameter [31:0] REG_OUTPUT = 0,
+    parameter [31:0] RST_USED = 0,
+    parameter [31:0] SIM_ASSERT_CHK = 0
 ) (
     input  wire src_clk,
     input  wire src_pulse,
@@ -46,10 +46,10 @@ module xpm_cdc_pulse #(
 endmodule
 
 module xpm_cdc_single #(
-    parameter int DEST_SYNC_FF = 2,
-    parameter int INIT_SYNC_FF = 0,
-    parameter int SIM_ASSERT_CHK = 0,
-    parameter int SRC_INPUT_REG = 0
+    parameter [31:0] DEST_SYNC_FF = 2,
+    parameter [31:0] INIT_SYNC_FF = 0,
+    parameter [31:0] SIM_ASSERT_CHK = 0,
+    parameter [31:0] SRC_INPUT_REG = 0
 ) (
     input  wire src_clk,
     input  wire src_in,
@@ -62,11 +62,11 @@ module xpm_cdc_single #(
 endmodule
 
 module xpm_cdc_array_single #(
-    parameter int DEST_SYNC_FF = 2,
-    parameter int INIT_SYNC_FF = 0,
-    parameter int SIM_ASSERT_CHK = 0,
-    parameter int SRC_INPUT_REG = 0,
-    parameter int WIDTH = 1
+    parameter [31:0] DEST_SYNC_FF = 2,
+    parameter [31:0] INIT_SYNC_FF = 0,
+    parameter [31:0] SIM_ASSERT_CHK = 0,
+    parameter [31:0] SRC_INPUT_REG = 0,
+    parameter [31:0] WIDTH = 1
 ) (
     input  wire             src_clk,
     input  wire [WIDTH-1:0] src_in,
@@ -79,11 +79,11 @@ module xpm_cdc_array_single #(
 endmodule
 
 module xpm_cdc_gray #(
-    parameter int DEST_SYNC_FF = 2,
-    parameter int INIT_SYNC_FF = 0,
-    parameter int REG_OUTPUT = 0,
-    parameter int SIM_ASSERT_CHK = 0,
-    parameter int WIDTH = 1
+    parameter [31:0] DEST_SYNC_FF = 2,
+    parameter [31:0] INIT_SYNC_FF = 0,
+    parameter [31:0] REG_OUTPUT = 0,
+    parameter [31:0] SIM_ASSERT_CHK = 0,
+    parameter [31:0] WIDTH = 1
 ) (
     input  wire             src_clk,
     input  wire [WIDTH-1:0] src_in_bin,

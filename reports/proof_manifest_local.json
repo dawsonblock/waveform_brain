@@ -1,46 +1,46 @@
 {
   "schema_version": 1,
   "mode": "proof-local",
-  "generated_at_utc": "2026-05-29T06:42:22.618111+00:00",
+  "generated_at_utc": "2026-05-29T20:36:13.408577+00:00",
   "command": "python3 scripts/generate_proof_manifest.py --mode proof-local",
   "pass": true,
-  "source_tree_hash": "e5c023ec792d5f91a2fce75013acb292fc792469749ac7f9a4a8fbe7797dd069",
+  "source_tree_hash": "88ec0ebe160aa3938c92518b7c4f7c04e8e0400f098e16ec78947456ff0fd500",
   "required_file_count": 25,
   "files": [
     {
       "path": "reports/preboard_local_summary.json",
       "size": 21437,
-      "sha256": "ab91152d200f092ccfbcd61aaa7e57212ba78bfaba1ea2bf8c3953918f213821"
+      "sha256": "3ffddf8c9b0cfbcba64257c05f8c33d3d3dc79d02a1b727b2e814119448176a8"
     },
     {
       "path": "reports/preboard_local_summary.md",
       "size": 3231,
-      "sha256": "580652593db1cb2d329efcf00b9f47000adb67b13c2ac9e658396db40a8b71ff"
+      "sha256": "722aa811cc14f9c11529265ff4fce89ea9e1a9e0f63436ac5ffdd06ca1f29a09"
     },
     {
       "path": "reports/local_toolchain_summary.json",
       "size": 1340,
-      "sha256": "e4ad0631de9927c83c1aa43b59a5238cddbdd026cc27f36d94b50ec29f65d72e"
+      "sha256": "ce035665dad7642a989f442008c30654521cbeacf5031e29e6c6b102bc58b390"
     },
     {
       "path": "reports/source_tree_hash_summary.json",
       "size": 288,
-      "sha256": "5569b27e0ba02bd285f4199d79fa3839c09b7465b85021f6d452dcd9588af521"
+      "sha256": "145ef3e520fa29e162cb6fa7c1eeeba9a93c71d64bcf88a93989cdf458cd3780"
     },
     {
       "path": "reports/source_tree_hash.txt",
       "size": 65,
-      "sha256": "5b5e9bb917af73db27469a8a8f70d4b244d04e9b85521186658d278e04252546"
+      "sha256": "57f219ac0b42f37f58f40a2199359890c68b01afe673afa6c8ccbe50b5988f21"
     },
     {
       "path": "reports/source_tree_clean_summary.json",
       "size": 296,
-      "sha256": "a624af18c5e16be91008a8afe3ca19b57e6676d50ef0a2b4496b1459c8db809d"
+      "sha256": "aae51739099d4f7e4b502a2f6021940432758baca710a70e42049c6cb5f08bdc"
     },
     {
       "path": "reports/cdc_static_summary.json",
       "size": 343,
-      "sha256": "c81e2b32695a2a825149c6e603cb7b439753a4515d9f406e8566d98c0d399983"
+      "sha256": "458cdf1294f394423a79b28d4711570793026d195b185db6f91e3b577caa42e1"
     },
     {
       "path": "reports/register_map.json",
@@ -50,12 +50,12 @@
     {
       "path": "reports/unittest.log",
       "size": 195,
-      "sha256": "c6e71c60268c809ae1f29673c99c061dcb8515ab1ec579f26684a5c81e226b77"
+      "sha256": "de3d6ba4cc4b131416cd109070919ace6fa825dd1a3e0c403ec1ddbc9deb765e"
     },
     {
       "path": "reports/make_validate.log",
       "size": 3705,
-      "sha256": "e464714adfe3de395a1e1a9adc4ed4b1868828db7c13376e5f9be91c1c39a14c"
+      "sha256": "31da27dcaabdd7a71ecf238d86af0469fc0fb6fbb187e14ff52430c46b792350"
     },
     {
       "path": "reports/gkp_decoder_sim.log",
@@ -65,7 +65,7 @@
     {
       "path": "reports/axilite_regfile_sim_summary.json",
       "size": 1331,
-      "sha256": "424cf4007c6b57e19164e6f528efb455d15d0c42c52bef08281e09f453317683"
+      "sha256": "7fcedfcdffc270841c3cafa0f95acae4fa7772195b80b16348c492ea9e2cf240"
     },
     {
       "path": "reports/axilite_regfile_sim.log",
@@ -75,7 +75,7 @@
     {
       "path": "reports/packer_axis_sim_summary.json",
       "size": 1005,
-      "sha256": "5ade4d335d992d1d67e0ae12b3d7e82d262d63aaa22b2e470a9043b12ad1b664"
+      "sha256": "471d8bc9ec25e9a4852382a1694e05c13224099fea21b939a66ad5407b3f9cd9"
     },
     {
       "path": "reports/packer_axis_sim.log",
@@ -85,7 +85,7 @@
     {
       "path": "reports/safety_monitor_sim_summary.json",
       "size": 1455,
-      "sha256": "e9c6a289739fade9fa45174b7d0d2aa5bcd482f09e11fc3c22ab8d7aa8166770"
+      "sha256": "f1d43b5c2933f8cd3e11394ea3912f94c6dd562e2973d5ed8f8dbd4a3f737ae8"
     },
     {
       "path": "reports/safety_monitor_sim.log",
@@ -95,7 +95,7 @@
     {
       "path": "reports/prbs_datapath_sim_summary.json",
       "size": 4571,
-      "sha256": "79065629548eb4a04b24ad7371ae3b61d36377a0c75a3d3cc44add591e07c1cf"
+      "sha256": "60cd71c1b4ff863cac2b83e0b31a5bb22642f24f54242963d003390a412b6533"
     },
     {
       "path": "reports/prbs_datapath_sim.log",
@@ -105,7 +105,7 @@
     {
       "path": "reports/gkp_decoder_sim_summary.json",
       "size": 860,
-      "sha256": "12f20c83cd767fba199e5b22736c87d4d59372ee121974fa9932c8f87aa605ff"
+      "sha256": "64d3886f8c61dc4fab196d72044623176eba6b696aba2c263ef982a804216de1"
     },
     {
       "path": "reports/rtl_arithmetic_audit.json",
