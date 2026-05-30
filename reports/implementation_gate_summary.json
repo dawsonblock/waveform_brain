@@ -1,0 +1,33 @@
+{
+  "timestamp_utc": "2026-05-29T06:44:29.863772+00:00",
+  "pass": false,
+  "checks": {
+    "cdc_critical": {
+      "pass": false,
+      "detail": "missing cdc_critical_summary.json"
+    },
+    "cdc_cell_match": {
+      "pass": false,
+      "detail": "missing cdc_cell_match_summary.md"
+    },
+    "timing": {
+      "pass": false,
+      "detail": "missing timing_summary.rpt"
+    },
+    "drc": {
+      "pass": false,
+      "detail": "missing drc.rpt"
+    }
+  },
+  "required_reports": [
+    "cdc_critical_summary.json",
+    "cdc_cell_match_summary.md",
+    "timing_summary.rpt",
+    "drc.rpt"
+  ],
+  "optional_reports": [
+    "cdc_full.rpt",
+    "clock_interaction.rpt",
+    "utilization.rpt"
+  ]
+}
