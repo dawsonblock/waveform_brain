@@ -31,7 +31,6 @@
 
 
 module packer_axis #(
-module packer_axis #(
     parameter int DATA_WIDTH = 16
 )(
     input  logic                     clk,

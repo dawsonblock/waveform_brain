@@ -11,7 +11,6 @@
 
 
 module gkp_decoder #(
-module gkp_decoder #(
     parameter int ADC_WIDTH   = 16,
     parameter int SCALE_WIDTH = 32
 )(

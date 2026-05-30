@@ -5,13 +5,13 @@ source-tree-clean: PASS
 PYTHONPATH=. python3 -m unittest discover -s tests
 ................................................................................................
 ----------------------------------------------------------------------
-Ran 96 tests in 1.976s
+Ran 96 tests in 1.890s
 
 OK
 python3 scripts/rtl_sanity_check.py
 Sanity check complete.
 python3 scripts/generate_reciprocal_lut.py
-Wrote 131072 entries to /Users/dawsonblock/Downloads/waveform_brain_v1_auto_cal/rtl/reciprocal_lut_w16_q24w25.mem
+Wrote 131072 entries to /Users/dawsonblock/Downloads/waveform_brain-main-3/rtl/reciprocal_lut_w16_q24w25.mem
 python3 scripts/extract_register_map.py
 Extracted 29 registers
 Wrote register_map.json

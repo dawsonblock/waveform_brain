@@ -1,8 +1,6 @@
-rtl/axilite_regfile_full.v:12: warning: timescale for axilite_regfile_full inherited from another file.
-sim/tb_axilite_regfile_full.sv:1: ...: The inherited timescale is here.
-rtl/axilite_regfile_full.v:151: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
-rtl/axilite_regfile_full.v:188: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
-rtl/axilite_regfile_full.v:285: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
+rtl/axilite_regfile_full.v:154: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
+rtl/axilite_regfile_full.v:191: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
+rtl/axilite_regfile_full.v:288: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
 
 TB_PASS tb_axilite_regfile_full
 sim/tb_axilite_regfile_full.sv:355: $finish called at 445000 (1ps)

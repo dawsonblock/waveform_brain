@@ -13,7 +13,6 @@
 
 
 module axilite_regfile_full (
-module axilite_regfile_full (
     input  logic                         s_axi_aclk,
     input  logic                         s_axi_aresetn,
 

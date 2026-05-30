@@ -7,7 +7,6 @@
 
 
 module axis_packet_fifo #(
-module axis_packet_fifo #(
     parameter int DATA_WIDTH = 64,
     parameter int DEPTH      = 16
 )(

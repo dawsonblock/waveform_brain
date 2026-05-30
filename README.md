@@ -5,9 +5,10 @@ calibration, and board bring-up.
 
 This repository combines:
 
-- CDC-hardened AXI-Lite control paths
+- AXI-Lite control with explicit CDC boundary wrapper (XPM patterns; full
+  CDC sign-off requires Vivado `report_cdc`, which is not checked in)
 - pipelined decoder and soft-weighting RTL
-- deterministic RTL-to-golden co-simulation
+- deterministic RTL-to-golden co-simulation (Icarus Verilog)
 - pre-board and implementation gate scripts
 - sign-off packaging for review and handoff
 
@@ -25,8 +26,12 @@ iteratively hardened into a bring-up flow with explicit quality gates:
 
 - **Atomic staged configuration apply**
   - Config writes are staged, then committed in one operation via `WB_REG_CFG_APPLY`.
-- **CDC-first integration top**
-  - Dedicated CDC wrapper and AXI/fabric clock-domain boundaries with XPM patterns.
+- **CDC-aware integration top**
+  - Dedicated CDC wrapper with XPM-pattern crossings. The simulation library
+    in `rtl/xpm_cdc_stubs.v` models real N-flop synchronizer chains, gray-coded
+    counter crossings, toggle-based pulse synchronizers, and full req/ack
+    handshake behavior; replace it with the Xilinx XPM library in the Vivado
+    synthesis flow for sign-off.
 - **Pipelined fixed-point decoder path**
   - Decoder, polynomial eval, and soft weighting aligned for deterministic behavior.
 - **Health + telemetry visibility**
@@ -76,6 +81,13 @@ Or run the consolidated flow:
 
 ```bash
 make validate
+```
+
+For a full local proof bundle (regenerates source-tree hash, the proof
+manifest, all required reports, and validates archives):
+
+```bash
+make release-validate-local
 ```
 
 ### 3) Run RTL/golden co-sim
@@ -167,11 +179,16 @@ docs/       Design notes, validation plans, versioned hardening docs
 
 ## Test status expectations
 
-Current baseline flow targets:
+Current baseline (this tree, last `make release-validate-local` run):
 
-- unit/static tests passing via `python3 -m unittest discover -s tests`
-- reproducible generated artifacts
-- explicit pass/fail summaries for local pre-board and implementation gates
+- 96 unit/static tests pass via `python3 -m unittest discover -s tests`
+- 4 behavioral RTL co-sims pass: `axilite_regfile`, `packer_axis`,
+  `safety_monitor`, `prbs_datapath` (each prints `TB_PASS`)
+- `gkp_decoder` golden co-sim passes (16/16 vectors, 0 fail)
+- `make audit-arith` reports 0 critical / 0 warnings
+- `make check-proof-invariant` passes (`source_tree_hash.txt` matches the
+  proof manifest, all 25 required artifacts present)
+- `dist/` contains validated source and local-proof archives
 
 Strict release flow targets:
 
@@ -189,8 +206,11 @@ Strict release flow targets:
 | Capability | Status | Evidence |
 | --- | --- | --- |
 | Implemented | Yes | RTL + scripts + userspace in tree |
-| Locally tested | Yes | `make validate`, unit/static checks |
-| Simulated | Partial | AXI-Lite and AXI-Stream behavior sims; co-sim requires simulator availability |
+| Locally tested | Yes | 96 unit/static tests pass; `make validate` |
+| Simulated (behavioral RTL) | Yes | 4 behavioral sims + GKP co-sim pass under iverilog |
+| CDC modeled in sim | Yes | Real N-flop / handshake / gray / pulse behavior in `rtl/xpm_cdc_stubs.v` |
+| CDC signed off (Vivado) | No (gated) | Requires `report_cdc` output checked into `reports/` and passing `cdc-gate-check` |
+| Local proof packaged | Yes | `make release-validate-local` green; manifest hash matches tree |
 | Vivado proven | No (gated) | Requires CDC/timing/DRC/utilization/clock-interaction reports and passing implementation gate |
 | Board proven | No (gated) | Requires board smoke evidence after Vivado-proven build |
 
@@ -219,3 +239,28 @@ Strict release flow targets:
 | Exploration flow | `make validate` | Optional | Optional |
 | Local proof flow | `make release-validate-local` | Mandatory | Not required |
 | Board proof flow | `make release-validate-board` | Mandatory | Mandatory |
+
+## Honest status / known limitations
+
+This section is deliberately conservative so the readiness matrix above does
+not overstate maturity:
+
+- **XPM CDC primitives in `rtl/xpm_cdc_stubs.v` are simulation models, not
+  the Xilinx XPM library.** They model N-flop synchronizer chains, gray-coded
+  counter crossings, toggle-based pulse synchronizers, and full req/ack
+  handshakes — enough to expose CDC integration bugs in simulation, but they
+  do not model metastability and are not bit-accurate replacements. Real
+  synthesis must use the actual Xilinx XPM library.
+- **No Vivado `report_cdc` output is checked in.** The targets
+  `make cdc-analyze` / `make cdc-gate-check` / `make cdc-signoff-package`
+  parse Vivado-produced reports; until those reports exist in `reports/`,
+  CDC sign-off is not earned and the gate is correctly fail-closed.
+- **Vivado/board flows require external toolchain access** (`BOARD_DEVICE`,
+  Vivado installation, hardware) and are gated out of CI here.
+- **iverilog elaboration emits a couple of "constant selects in always_*"
+  informational warnings** on `rtl/safety_monitor.v` and `rtl/gkp_decoder.v`.
+  Sims still pass; Vivado/Verilator handle the construct natively.
+- **`reports/proof_manifest_local.json` records SHA256 for every required
+  artifact**, but the optional `size_bytes` field is currently emitted as
+  `null`. Integrity is unaffected — the invariant check is hash-based.
+

@@ -33,6 +33,12 @@ def find_ops(path: Path) -> list[dict]:
     text = strip_comments(path.read_text(encoding="utf-8", errors="ignore"))
     issues = []
     for lineno, line in enumerate(text.splitlines(), start=1):
+        # Skip compiler directives (e.g. `timescale 1ns/1ps, `define, `include).
+        # These are not synthesizable arithmetic and the `/` in `1ns/1ps`
+        # otherwise trips the division-operator regex below.
+        if line.lstrip().startswith("`"):
+            continue
+
         # Remove strings.
         scrub = re.sub(r'".*?"', '""', line)
 

@@ -8,7 +8,6 @@
 
 
 module safety_monitor #(
-module safety_monitor #(
     parameter int ADC_WIDTH = 16
 )(
     input  logic                     clk,
