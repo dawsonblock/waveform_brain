@@ -31,6 +31,8 @@ REQUIRED_LOCAL = [
     "reports/safety_monitor_sim.log",
     "reports/prbs_datapath_sim_summary.json",
     "reports/prbs_datapath_sim.log",
+    "reports/cdc_cosim_summary.json",
+    "reports/cdc_cosim.log",
     "reports/gkp_decoder_sim_summary.json",
     "reports/rtl_arithmetic_audit.json",
     "reports/rtl_arithmetic_audit.md",

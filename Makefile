@@ -109,6 +109,9 @@ sim-safety:
 sim-prbs:
 	$(PYTHON) scripts/run_prbs_datapath_sim.py
 
+cdc-cosim:
+	$(PYTHON) scripts/run_cdc_cosim.py
+
 clean-generated:
 	$(PYTHON) scripts/clean_generated_artifacts.py
 
@@ -208,6 +211,7 @@ release-validate-local:
 	$(MAKE) sim-packer
 	$(MAKE) sim-safety
 	$(MAKE) sim-prbs
+	$(MAKE) cdc-cosim
 	$(MAKE) release-prereqs-local
 	$(MAKE) proof-manifest-local
 	$(MAKE) source-package

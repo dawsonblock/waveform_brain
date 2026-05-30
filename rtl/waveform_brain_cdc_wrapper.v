@@ -113,7 +113,7 @@ module waveform_brain_cdc_wrapper #(
     logic [TELEM_WIDTH-1:0] fab_telem_bus;
     logic [TELEM_WIDTH-1:0] axi_telem_bus;
 
-    always_comb begin
+    always @(*) begin
         axi_cfg_bus = {
             axi_prbs_enable,
             axi_inv_delta_q,

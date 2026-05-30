@@ -5,7 +5,7 @@ source-tree-clean: PASS
 PYTHONPATH=. python3 -m unittest discover -s tests
 ................................................................................................
 ----------------------------------------------------------------------
-Ran 96 tests in 1.890s
+Ran 96 tests in 3.548s
 
 OK
 python3 scripts/rtl_sanity_check.py
